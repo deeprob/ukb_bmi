@@ -1,3 +1,4 @@
+import os
 import subprocess
 import multiprocessing as mp
 
@@ -16,4 +17,5 @@ def process(i):
     return
 
 pool = mp.Pool(100)
+os.makedirs(output_dir, exist_ok=True)
 pool.map(process, [s for s in range(0, 1000)])
