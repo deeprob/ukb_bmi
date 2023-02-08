@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=girirajan
 #SBATCH --partition=girirajan
-#SBATCH --job-name=isec_bcf
+#SBATCH --job-name=ukb_bulk
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --time=400:0:0

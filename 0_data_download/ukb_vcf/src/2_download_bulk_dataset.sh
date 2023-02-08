@@ -26,8 +26,8 @@ $fetch_helper -b$bulk_filename -s$start -m$number_of_files -o$bulk_log_file -a$k
 sed -n ${start},${end}p $bulk_filename | 
 while read -r sample field 
 do
-    last3_sample=${sample: -3}
-    move_dir="${bulk_field_storage_dir}/${last3_sample}/"
+    last2_sample=${sample: -2}
+    move_dir="${bulk_field_storage_dir}/${last2_sample}/"
     mkdir -p $move_dir
     mv ./${sample}_${field}* $move_dir
 done
