@@ -5,9 +5,9 @@
 #SBATCH -o /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/5_out.log
 #SBATCH -e /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/5_err.log
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=30
 #SBATCH --time=400:0:0
-#SBATCH --mem-per-cpu=100G
+#SBATCH --mem-per-cpu=50G
 #SBATCH --chdir /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data
 #SBATCH --nodelist qingyu
 
