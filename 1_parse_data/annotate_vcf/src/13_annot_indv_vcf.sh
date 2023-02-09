@@ -8,7 +8,7 @@ tmp_file="$out_dir"/annotated.vcf.gz
 out_file="$out_dir"/annotated_filtered.vcf.gz
 table_file="$out_dir"/"$sample_name".tsv
 
-annot_vcf="/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/vcfs/all_annot.hg38_multianno.vcf.gz"
+annot_vcf="/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/vcfs/all_annot.hg38_multianno.vcf.gz"
 
 
 # annotate the variants in a sample

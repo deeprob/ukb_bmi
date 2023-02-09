@@ -9,6 +9,8 @@
 #SBATCH --chdir /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data
 #SBATCH -o /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/11_out.log
 #SBATCH -e /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/11_err.log
+#SBATCH --nodelist qingyu
+
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
