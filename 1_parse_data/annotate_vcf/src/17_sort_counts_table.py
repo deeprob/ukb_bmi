@@ -6,7 +6,7 @@ import pandas as pd
 
 
 
-df = pd.read_csv('../data/counts/exonic_variants_high_impact_moderate_impact_counts_frequency.tsv', sep='\t')
+df = pd.read_csv('/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/counts/exonic_variants_high_impact_moderate_impact_counts_frequency.tsv', sep='\t', low_memory=False)
 df = df[df.cohort_frequency <= 0.01]
 
 def chrom2int(s):
@@ -25,5 +25,5 @@ df['dummy'] = '.'
 
 df = df.sort_values(['chrom_int', 'pos'])
 
-df.to_csv('../data/counts/exonic_variants_high_impact_moderate_impact_counts_frequency_sorted.tsv', sep='\t', index=False)
+df.to_csv('/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/counts/exonic_variants_high_impact_moderate_impact_counts_frequency_sorted.tsv', sep='\t', index=False)
 

@@ -9,6 +9,7 @@
 #SBATCH --chdir /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data
 #SBATCH -o /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/14_out.log
 #SBATCH -e /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/14_err.log
+#SBATCH --nodelist qingyu
 
 
 echo `date` starting job on $HOSTNAME

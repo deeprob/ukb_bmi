@@ -5,7 +5,7 @@
 import pandas as pd
 
 
-root_dir = '/data5/UK_Biobank/annotations/vep/2022_03_13/'
+root_dir = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data'
 
 
 df = pd.read_csv(f'{root_dir}/data/variants/exonic_variants_high_impact_moderate_impact_rare_lof_missense_formatted_pred.tsv', sep='\t')

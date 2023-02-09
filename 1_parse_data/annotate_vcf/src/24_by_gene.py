@@ -6,7 +6,7 @@
 import sys
 
 
-root_dir = '/data5/UK_Biobank/annotations/vep/2022_03_13/'
+root_dir = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data'
 
 
 infile = f'{root_dir}/data/prepared_variants/lof_missense_pred_freq_0.01.tsv'

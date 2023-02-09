@@ -3,7 +3,7 @@
 
 import pandas as pd
 
-fin = open('../data/variants/exonic_variants_high_impact_moderate_impact.tsv', 'r')
+fin = open("/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/variants/exonic_variants_high_impact_moderate_impact.tsv", 'r')
 
 
 counts = {}
@@ -22,7 +22,7 @@ for line in fin:
 
 
 
-fout = open('../data/counts/exonic_variants_high_impact_moderate_impact_counts.tsv', 'w')
+fout = open("/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/counts/exonic_variants_high_impact_moderate_impact_counts.tsv", 'w')
 for variant_id in counts:
 	outline = f'{variant_id}\t{counts[variant_id]}\n'
 	fout.write(outline)

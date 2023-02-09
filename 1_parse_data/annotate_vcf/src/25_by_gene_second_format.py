@@ -13,7 +13,7 @@ import sys
 
 
 
-root_dir = '/data5/UK_Biobank/annotations/vep/2022_03_13/'
+root_dir = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data'
 
 infile = f'{root_dir}/data/variants_by_gene/lof_missense_pred_freq_0.01.tsv'
 outfile = f'{root_dir}/data/variants_by_gene/lof_missense_pred_freq_0.01_format2.tsv'
@@ -25,7 +25,7 @@ indf = pd.read_csv(infile, sep='\t')
 indf['Sample'] = indf['Sample'].astype(int)
 
 
-filename = '/data5/UK_Biobank/annotations/vep/2022_02_27/samples.csv'
+filename = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/samples.csv'
 samples_df = pd.read_csv(filename)
 samples = samples_df['Sample'].astype(int).to_list()
 

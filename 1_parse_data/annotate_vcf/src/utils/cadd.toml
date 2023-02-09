@@ -1,0 +1,5 @@
+[[annotation]]
+file="/data5/bx_reference/hg38/annotations/whole_genome_SNVs.tsv.gz"
+columns = [5, 6]
+ops=["mean", "mean"]
+names=["CADD_RawScore", "CADD_PHRED"]

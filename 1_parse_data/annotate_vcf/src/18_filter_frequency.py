@@ -2,21 +2,16 @@
 
 
 
-import pandas as pd
 import sys
 
 
 sample = sys.argv[1]
 
 
-counts_file = '../data/counts/exonic_variants_high_impact_moderate_impact_counts_frequency_sorted.tsv'
+counts_file = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/counts/exonic_variants_high_impact_moderate_impact_counts_frequency_sorted.tsv'
+infile = f'/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/annotated_by_sample/{sample[-2:]}/{sample}/{sample}.tsv'
+outfile = f'/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/annotated_by_sample/{sample[-2:]}/{sample}/{sample}_filtered.tsv'
 
-
-
-infile = f'/data5/UK_Biobank/annotations/vep/2022_03_13/data/by_sample/{sample[-2:]}/{sample}/{sample}.tsv'
-
-
-outfile = f'/data5/UK_Biobank/annotations/vep/2022_03_13/data/by_sample/{sample[-2:]}/{sample}/{sample}_filtered.tsv'
 
 def chrom2int(s):
 	s = s[len('chr'):]

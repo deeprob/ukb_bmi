@@ -6,8 +6,8 @@
 import pandas as pd
 
 
-infile = '../data/variants/exonic_variants_high_impact_moderate_impact_rare.tsv'
-outfile = '../data/variants/exonic_variants_high_impact_moderate_impact_rare_lof_missense.tsv'
+infile = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/variants/exonic_variants_high_impact_moderate_impact_rare.tsv'
+outfile = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/variants/exonic_variants_high_impact_moderate_impact_rare_lof_missense.tsv'
 
 
 

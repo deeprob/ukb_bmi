@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --account=girirajan
 #SBATCH --partition=girirajan
-#SBATCH --job-name=loftee
+#SBATCH --job-name=meta_tab
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=100:0:0
-#SBATCH --mem-per-cpu=40G
+#SBATCH --mem-per-cpu=200G
 #SBATCH --chdir /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data
-#SBATCH -o /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/9_out.log
-#SBATCH -e /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/9_err.log
+#SBATCH -o /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/25_out.log
+#SBATCH -e /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/slurm/logs/25_err.log
 #SBATCH --nodelist qingyu
 
 
@@ -27,10 +27,10 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-conda activate loftee
+conda activate ukbiobank
 
 echo `date` starting job on $HOSTNAME
 
-bash /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/src/9_add_loftee_annot.sh
+python /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/src/25_by_gene_second_format.py
 
 echo `date` ending job

@@ -17,7 +17,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 
 
-root_dir = '/data5/UK_Biobank/annotations/vep/2022_03_13/'
+root_dir = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf'
 
 
 columns = ['Chrom', 'Pos', 'Ref', 'Alt', 'Qual', 'Filter', 'CADD', 'SIFT_pred', 'LRT_pred', 'MutationAssessor_pred', 'FATHMM_pred', 'PROVEAN_pred', 'MetaSVM_pred', 'MetaLR_pred', 'MetaRNN_pred', 'PrimateAI_pred', 'DEOGEN2_pred', 'BayesDel_addAF_pred', 'BayesDel_noAF_pred', 'ClinPred_pred', 'Sample', 'GT', 'DP', 'AD', 'GQ', 'MIN_DP', 'PL', 'VAF', 'Allele', 'Consequence', 'IMPACT', 'SYMBOL', 'Gene', 'Feature_type', 'Feature', 'BIOTYPE', 'EXON', 'INTRON', 'HGVSc', 'HGVSp', 'cDNA_position', 'CDS_position', 'Protein_position', 'Amino_acids', 'Codons', 'Existing_variation', 'DISTANCE', 'STRAND', 'FLAGS', 'VARIANT_CLASS', 'SYMBOL_SOURCE', 'HGNC_ID', 'LoF', 'LoF_filter', 'LoF_flags', 'LoF_info', 'variant_id', 'Mut_type', 'sample_variant_id', 'cohort_count', 'cohort_frequency']
