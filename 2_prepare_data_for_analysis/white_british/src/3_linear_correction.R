@@ -1,6 +1,4 @@
 #!/bin/R
-
-
 library(glue)
 
 final_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british/data/samples.csv"
@@ -22,20 +20,8 @@ for (col in continuous_discrete_input_columns){
 
 # scale bmi
 df[, 'bmi_scaled'] = scale(df[, 'bmi'])
-
-
-
-
-
-
 formula = glue('bmi_scaled ~ {glue_collapse(binary_input_columns, sep = " + ")} + {glue_collapse(continuous_discrete_input_columns, sep = "_scaled + ")}_scaled')
-
-
-
-
 mod = lm(formula, data=df, x=T)
-
-
 residuals = resid(mod)
 residuals = as.numeric(residuals)
 df$bmi_residuals = residuals

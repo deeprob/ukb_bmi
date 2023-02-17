@@ -1,9 +1,9 @@
 #!/bin/python3
 import pandas as pd
 
-corrected_file_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british/data/samples_with_residuals.csv"
-cases_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british/data/cases_controls/cases.txt"
-controls_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british/data/cases_controls/controls.txt"
+corrected_file_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british_lifestyle_regressed/data/samples_with_residuals.csv"
+cases_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british_lifestyle_regressed/data/cases_controls/cases.txt"
+controls_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british_lifestyle_regressed/data/cases_controls/controls.txt"
 
 df = pd.read_csv(corrected_file_samples_file)
 df = df.sort_values('bmi_residuals')
