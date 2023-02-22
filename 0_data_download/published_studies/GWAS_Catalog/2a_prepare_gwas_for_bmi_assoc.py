@@ -5,7 +5,7 @@ import pandas as pd
 
 
 
-gwas_df = pd.read_csv('gwas_catalog_v1.0.2-associations_e105_r2022-04-07.tsv', sep='\t')
+gwas_df = pd.read_csv('./data/gwas_catalog_v1.0.2-associations_e105_r2022-04-07.tsv', sep='\t')
 
 
 
