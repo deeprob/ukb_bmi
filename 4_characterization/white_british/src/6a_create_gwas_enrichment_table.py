@@ -75,7 +75,7 @@ if __name__ == "__main__":
     combinations3_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_3.csv"
     gencode_file = "/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_gencode_genes/data/gencode.v39.parsed.genes.csv"
     fishers_bash_path = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/src/scripts/fishers_exact.sh"
-    save_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/gwas_enrichment.csv"
+    save_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/gwas/gwas_enrichment.csv"
 
     gwas_df = pd.read_csv(gwas_file, low_memory=False)
     combinations2_df = pd.read_csv(combinations2_file, low_memory=False)
