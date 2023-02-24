@@ -4,7 +4,7 @@ from scipy.stats import kstest
 
 
 wes_file = "/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/variants_by_gene/lof_missense_pred_freq_0.01.tsv"
-phenotype_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/non_white_british/data/samples.csv"
+phenotype_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/non_white_british_female/data/samples.csv"
 
 
 wes_df = pd.read_csv(wes_file, sep='\t')

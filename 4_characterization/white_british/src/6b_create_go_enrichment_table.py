@@ -1,6 +1,4 @@
 import pandas as pd
-from scipy.stats import fisher_exact
-from statsmodels.stats.multitest import multipletests
 import subprocess
 import os
 
