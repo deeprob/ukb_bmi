@@ -1,12 +1,11 @@
 library("biomaRt")
 library("clusterProfiler")
-library("enrichplot")
 
 
 args = commandArgs(trailingOnly=TRUE)
 # check to see that one argument is given
 if (length(args)!=2) {
-  stop("gene_list filename and gsea output filename must be given", call.=FALSE)
+  stop("gene_list filename and output filename must be given", call.=FALSE)
 }
 
 gene_file = args[1]

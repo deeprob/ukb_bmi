@@ -5,9 +5,9 @@
 
 library(glue)
 
-sig_combo2_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_2.csv"
-sig_combo3_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_3.csv"
-variant_by_gene_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/additive/input_table.csv"
+sig_combo2_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/protective/data/parsed_tables/combo_2.csv"
+sig_combo3_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/protective/data/parsed_tables/combo_3.csv"
+variant_by_gene_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/data/additive/input_table.csv"
 
 sig_combos_df2 = read.csv(sig_combo2_file)
 sig_combos_df3 = read.csv(sig_combo3_file)
@@ -61,7 +61,7 @@ for (i in 1:nrow(sig_combos_df2)) {
 	sig_combos_df2[i, 'pvalue'] = pvalue
 }
 
-combo2_outfile = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/additive/combo2.csv"
+combo2_outfile = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/data/additive/combo2.csv"
 write.csv(sig_combos_df2, combo2_outfile, row.names=F)
 
 
@@ -112,5 +112,5 @@ for (i in 1:nrow(sig_combos_df3)) {
 
 }
 
-combo3_outfile = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/additive/combo3.csv"
+combo3_outfile = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/data/additive/combo3.csv"
 write.csv(sig_combos_df3, combo3_outfile, row.names=F)

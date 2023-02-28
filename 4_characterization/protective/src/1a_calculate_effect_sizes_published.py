@@ -2,7 +2,7 @@ import pandas as pd
 from statsmodels.stats.proportion import proportion_effectsize
 
 
-phdf = pd.read_csv("/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british/data/samples_with_residuals.csv")
+phdf = pd.read_csv("/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/protective/data/samples_with_residuals.csv")
 wdf = pd.read_csv("/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/annotate_vcf/data/variants_by_gene/lof_missense_pred_freq_0.01.tsv", sep='\t')
 
 # add decile info
@@ -18,9 +18,9 @@ phdf['bmi_highest_group'] = phdf['bmi_decile'].isin(highest_group)
 # Giant #
 #########
 
-giant_table1 = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/GIANT/Giant_Turcot_Table1.csv"
-giant_table2 = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/GIANT/Giant_Turcot_Table2.csv"
-giant_effect_size_save = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/effect_sizes/giant.csv"
+giant_table1 = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/GIANT/data/Giant_Turcot_Table1.csv"
+giant_table2 = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/GIANT/data/Giant_Turcot_Table2.csv"
+giant_effect_size_save = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/data/effect_sizes/giant.csv"
 
 giant1_df = pd.read_csv(giant_table1)
 giant2_df = pd.read_csv(giant_table2)
@@ -58,8 +58,8 @@ stats.to_csv(giant_effect_size_save, index=False)
 #########
 
 
-akbari_table = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/Akbari_2021/akbari_genes.csv"
-akbari_effect_size_save = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/effect_sizes/akbari.csv"
+akbari_table = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/Akbari_2021/data/akbari_genes.csv"
+akbari_effect_size_save = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/data/effect_sizes/akbari.csv"
 
 akb_df = pd.read_csv(akbari_table)
 high_genes = akb_df[akb_df.Beta > 0]['Gene'].to_list()

@@ -17,8 +17,8 @@ wes_df = wes_df[wes_df.Sample.isin(phenotype_df.eid)]
 wes_df = wes_df.drop_duplicates(['Sample', 'Gene']).copy()
 
 # load combinations of length 2 and 3
-combo2_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_2.csv"
-combo3_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_3.csv"
+combo2_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/protective_noicd/data/parsed_tables/combo_2.csv"
+combo3_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/protective_noicd/data/parsed_tables/combo_3.csv"
 sig_combos_df2 = pd.read_csv(combo2_file)
 sig_combos_df3 = pd.read_csv(combo3_file)
 sig_combos_df2['Combo_Name'] = sig_combos_df2['Item_1'] + '_' + sig_combos_df2['Item_2']
@@ -68,9 +68,9 @@ for i, row in sig_combos_df.iterrows():
     sig_combos_df.at[i, 'Mean_bmi_carriers'] = np.mean(bmi_with_combo)
     sig_combos_df.at[i, 'Mean_bmi_noncarriers'] = np.mean(bmi_without_combo)
     sig_combos_df.at[i, 'ks_test_pvalue'] = pvalue
-    sig_combos_df.at[i, 'directionally_consistent'] = np.mean(bmi_with_combo) > np.mean(bmi_without_combo)
-    sig_combos_df.at[i, 'directionally_consistent_and_signficant'] = (np.mean(bmi_with_combo) > np.mean(bmi_without_combo)) and (pvalue < 0.05)
+    sig_combos_df.at[i, 'directionally_consistent'] = np.mean(bmi_with_combo) < np.mean(bmi_without_combo)
+    sig_combos_df.at[i, 'directionally_consistent_and_signficant'] = (np.mean(bmi_with_combo) < np.mean(bmi_without_combo)) and (pvalue < 0.05)
 
 
-save_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/validation/dir_consistency.csv"
+save_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/protective/protective_noicd/data/validation/dir_consistency.csv"
 sig_combos_df.to_csv(save_file, index=False)
