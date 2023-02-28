@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-sample_to_icd_file = "/data5/UK_Biobank/phenotypes/icd10_codes/2022_04_01/tables/ukb30075_icd10.csv" #TODO: include this files parsing functions in prepare data
+sample_to_icd_file = "/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_icd_codes/data/ukb30075_icd10.csv"
 combo2_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/protective/data/parsed_tables/combo_2.csv"
 combo3_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/protective/data/parsed_tables/combo_3.csv"
 phenotypes_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/protective/data/samples.csv"
