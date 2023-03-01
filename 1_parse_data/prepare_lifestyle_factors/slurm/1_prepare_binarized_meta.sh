@@ -31,10 +31,10 @@ conda activate ukbiobank
 echo `date` starting job on $HOSTNAME
 
 lifestyle="/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/data/lifestyle_v2.xlsx"
-exome="/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/data/ukb48799.csv"
+exome="/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/ukb_vcf/data/ukb48799.csv"
 pheno_info="/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/ukb_field_info/data"
-pheno_store="/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/data"
+pheno_store="/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/data/binarized_tables"
 
-python /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/src/1_prepare_meta.py $lifestyle $exome $pheno_info $pheno_store
+python /data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/src/1_prepare_binarized_meta.py $lifestyle $exome $pheno_info $pheno_store
 
 echo `date` ending job
