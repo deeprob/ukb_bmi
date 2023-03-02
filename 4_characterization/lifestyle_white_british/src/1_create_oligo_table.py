@@ -11,8 +11,8 @@ def create_oligo_table(combo_dfs, ncombos, profile_df, save_file):
         # get unique items that came out of the enriched combinations
         enriched_combos = combo_df.loc[:, [f"Item_{c}" for c in range(1, nc+1)]].values
         columns_to_use = sorted(set(enriched_combos.flatten()))
-        gene_columns_to_use = [c for c in columns_to_use if "_ENSG" in c]
-        lifestyle_columns_to_use = [c for c in columns_to_use if "_ENSG" not in c]
+        gene_columns_to_use = [c for c in columns_to_use if c.startswith("ENSG")]
+        lifestyle_columns_to_use = [c for c in columns_to_use if not c.startswith("ENSG")]
         all_enriched_combos.extend(enriched_combos)
         all_cols.extend(columns_to_use)
         all_gene_cols.extend(gene_columns_to_use)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     phenotypes_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/lifestyle_white_british/data/samples_with_residuals.csv"
     combo_dfs = [pd.read_csv(cf) for cf in combo_files]
     profile_df = pd.read_csv(profile_file, sep="\t", low_memory=False, index_col=0)
-    profile_df.columns = [c.lstrip('Input_') for c in profile_df.columns]
+    profile_df.columns = [c[len('Input_'):] for c in profile_df.columns]
     print("read profile df")
     phenotypes_df = pd.read_csv(phenotypes_file, low_memory=False, usecols=["eid", "bmi"], index_col=0, dtype={"eid": str, "bmi": np.float64})
     profile_df = profile_df.merge(phenotypes_df, left_index=True, right_index=True)
