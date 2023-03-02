@@ -16,26 +16,9 @@ def main(in_dir, in_sub_dir, infilename, wes_table, store_dir):
         # read encoded extreme lifestyle factors
         lifestyle_df = pd.read_csv(infilepath, index_col=0)
         lifestyle_dfs.append(lifestyle_df)
-        # # merge lifestyle factors with wes data
-        # df = wes_df.merge(lifestyle_df, left_index=True, right_index=True)
-        # df.index.name = "Sample_Name"
-        # # save rarecomb table
-        # wes_with_lifestyle = os.path.join(store_dir, f"wes_with_{isd}.tsv")
-        # df.to_csv(wes_with_lifestyle, sep="\t")
-        # # save primary entities
-        # primary_entities_file = os.path.join(store_dir, f"primary_{isd}.csv")
-        # with open(primary_entities_file, "w") as f:
-        #     for c in lifestyle_df.columns:
-        #         f.write(f"{c}\n")
-        # # save secondary entities
-        # secondary_entities_file = os.path.join(store_dir, f"secondary_{isd}.csv")
-        # with open(secondary_entities_file, "w") as f:
-        #     for c in wes_df.columns:
-        #         f.write(f"{c}\n") 
 
     # create meta table for rarecomb input
-    # sub_dir = in_dir
-    # concatenate meta lifestyle factors
+    # concatenate lifestyle factors
     lifestyle_df = pd.concat(lifestyle_dfs, axis=1)
     # merge lifestyle factors with wes data
     df = wes_df.merge(lifestyle_df, left_index=True, right_index=True)

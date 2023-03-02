@@ -17,17 +17,22 @@ gencode = gencode.drop_duplicates('gene_id_stripped')
 gencode = gencode.set_index('gene_id_stripped', drop=False)
 
 
-def convert_gene_name(gene):
-	gene = gene[len('Input_'):]
-	gene = gencode.at[gene, 'gene_name']
-	return 'Input_' + gene
+def convert_item_name(item):
+	if item.startswith('Input_ENSG'):
+		# this is a gene
+		item = item[len('Input_'):]
+		item = gencode.at[item, 'gene_name']
+	else:
+		# this is a lifestyle factor, return as it
+		item = item[len('Input_'):]
+	return 'Input_' + item
 
 
 df = pd.read_csv(rarecomb_outfile)
 df['Phenotype'] = phenotype
 
 for i in range(1, int(combos)+1):
-	df[f'Item_{i}_symbol'] = df[f'Item_{i}'].apply(convert_gene_name)
+	df[f'Item_{i}_symbol'] = df[f'Item_{i}'].apply(convert_item_name)
 
 
 if 'Effect_Size' in df.columns:
