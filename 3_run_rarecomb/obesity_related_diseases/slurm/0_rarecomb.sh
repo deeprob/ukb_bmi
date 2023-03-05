@@ -10,7 +10,7 @@
 #SBATCH --mem-per-cpu=100G
 #SBATCH --chdir /data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/obesity_related_diseases/data
 #SBATCH --exclude ramona,durga,laila
-#SBATCH --array 1-42
+#SBATCH --array 43-84
 
 
 # >>> conda initialize >>>

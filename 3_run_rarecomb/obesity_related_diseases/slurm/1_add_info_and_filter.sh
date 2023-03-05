@@ -7,10 +7,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --time=400:0:0
-#SBATCH --mem-per-cpu=100G
+#SBATCH --mem-per-cpu=1G
 #SBATCH --chdir /data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/obesity_related_diseases/data
 #SBATCH --exclude ramona,durga,laila
-#SBATCH --array 1-3
+#SBATCH --array 1-42
 
 
 # >>> conda initialize >>>

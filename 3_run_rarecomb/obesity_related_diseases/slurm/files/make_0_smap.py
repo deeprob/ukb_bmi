@@ -5,12 +5,21 @@ icd_codes_of_interest = ['I10', 'E780', 'R074', 'I251', 'I259', 'E039', 'E11', '
 
 combos = [2,3,4]
 with open(smap_file, "w") as sfile:
+    # risk towards the disease
     for icd_code in icd_codes_of_interest:
         for combo in combos:
             icd_code = icd_code.replace(" ", "")
             cases_file = f"/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/cases_controls/cases_{icd_code}.txt"
             controls_file = f"/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/cases_controls/controls_{icd_code}.txt"
-            out_file = f"/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/obesity_related_diseases/data/statistics/{icd_code.strip()}_combo_{combo}.csv"
+            out_file = f"/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/obesity_related_diseases/data/statistics/{icd_code}_combo_{combo}.csv"
             sfile.write(" ".join([wes_file, cases_file, controls_file, str(combo), out_file]))
             sfile.write("\n")
-
+    # protective from the disease
+    for icd_code in icd_codes_of_interest:
+        for combo in combos:
+            icd_code = icd_code.replace(" ", "")
+            cases_file = f"/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/cases_controls/cases_{icd_code}.txt"
+            controls_file = f"/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/cases_controls/controls_{icd_code}.txt"
+            out_file = f"/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/obesity_related_diseases/data/statistics/{icd_code}_protective_combo_{combo}.csv"
+            sfile.write(" ".join([wes_file, controls_file, cases_file, str(combo), out_file]))
+            sfile.write("\n")
