@@ -47,4 +47,7 @@ if len(df)>0:
 	for column in columns_to_change:
 		df[column] = df[column].apply(lambda s: s[len('Input_'):])
 
+	df["unique_combo_name"] = list(map(lambda x: "_".join(sorted(x)), zip(*[df[f"Item_{c}_symbol"].to_list() for c in range(1, combos+1)])))
+	df["unique_combo_id"] = list(map(lambda x: "_".join(sorted(x)), zip(*[df[f"Item_{c}"].to_list() for c in range(1, combos+1)])))
+
 	df.to_csv(save_file, index=False)

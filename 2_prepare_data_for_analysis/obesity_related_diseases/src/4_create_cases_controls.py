@@ -163,9 +163,10 @@ def get_samples(node, sample_dir):
     assert type(all_samples) == set
     return all_samples
 
-interested_node = pheno_tree.node_dict[code2nodeid_dict["Chapter XXI"]]
-
 icd_codes_of_interest = ['I10', 'E780', 'R074', 'I251', 'I259', 'E039', 'E11', 'Block M15-M19', 'K80', 'K81', 'K82', 'F32', 'F33', 'G30']
+# save icd codes to look at table
+icd_interest_save_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/tables/obesity_related_diseases_icd.csv"
+df_pheno.loc[df_pheno.coding.isin(icd_codes_of_interest)].to_csv(icd_interest_save_file, index=False)
 
 for icd_code in icd_codes_of_interest:
     print(icd_code)

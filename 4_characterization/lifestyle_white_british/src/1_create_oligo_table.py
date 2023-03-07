@@ -24,13 +24,13 @@ def create_oligo_table(combo_dfs, ncombos, profile_df, save_file):
     # 3. Samples who have these combinations identified by rarecomb
     # 4. Samples who do not have either the gene or the lifestyle factors
     # condition 1 eval string
-    cond1 = "(" + " | ".join([f"({gene} == 1)" for gene in gene_columns_to_use]) + ")" + " & " + "(" + " & ".join([f"({lf} == 0)" for lf in lifestyle_columns_to_use]) + ")"
+    cond1 = "(" + " | ".join([f"({gene} == 1)" for gene in all_gene_cols]) + ")" + " & " + "(" + " & ".join([f"({lf} == 0)" for lf in all_lifestyle_cols]) + ")"
     # condition 2 eval string
-    cond2 = "(" + " | ".join([f"({lf} == 1)" for lf in lifestyle_columns_to_use]) + ")" + " & " + "(" +" & ".join([f"({gene} == 0)" for gene in gene_columns_to_use]) + ")"
+    cond2 = "(" + " | ".join([f"({lf} == 1)" for lf in all_lifestyle_cols]) + ")" + " & " + "(" +" & ".join([f"({gene} == 0)" for gene in all_gene_cols]) + ")"
     # condition 3 eval string
-    cond3 = " | ".join(["(" + " & ".join([f"({c} == 1)" for c in ec_i]) + ")" for ec_i in enriched_combos])
+    cond3 = " | ".join(["(" + " & ".join([f"({c} == 1)" for c in ec_i]) + ")" for ec_i in all_enriched_combos])
     # condition 4 eval string
-    cond4 = " & ".join([f"({lf_g} == 0)" for lf_g in columns_to_use])  
+    cond4 = " & ".join([f"({lf_g} == 0)" for lf_g in all_cols])  
     # create plot df
     conds = [cond1, cond2, cond3, cond4]
     cond_cats = ["genes only", "lifestyles only", "combos", "no gene or lifestyle"]    

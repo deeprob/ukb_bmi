@@ -7,7 +7,7 @@ import sys
 rarecomb_outfile = sys.argv[1]
 save_file = sys.argv[2]
 phenotype = sys.argv[3]
-combos = sys.argv[4]
+combos = int(sys.argv[4])
 
 
 filename = '/data5/bx_reference/hg38/annotations/gene_annotations/GENCODE39/gencode.v39.parsed.genes.tsv'
@@ -26,7 +26,7 @@ def convert_gene_name(gene):
 df = pd.read_csv(rarecomb_outfile)
 df['Phenotype'] = phenotype
 
-for i in range(1, int(combos)+1):
+for i in range(1, combos+1):
 	df[f'Item_{i}_symbol'] = df[f'Item_{i}'].apply(convert_gene_name)
 
 
@@ -46,5 +46,8 @@ if len(df)>0:
 	columns_to_change = [s for s in df.columns if s.startswith('Item_')]
 	for column in columns_to_change:
 		df[column] = df[column].apply(lambda s: s[len('Input_'):])
+	
+	df["unique_combo_name"] = list(map(lambda x: "_".join(sorted(x)), zip(*[df[f"Item_{c}_symbol"].to_list() for c in range(1, combos+1)])))
+	df["unique_combo_id"] = list(map(lambda x: "_".join(sorted(x)), zip(*[df[f"Item_{c}"].to_list() for c in range(1, combos+1)])))
 
 	df.to_csv(save_file, index=False)
