@@ -10,8 +10,8 @@ def get_combo_set(meta_df, group):
     group_df = meta_df.loc[meta_df.Phenotype==group]
     combo_set = set()
     if len(group_df)>0:
-        group_df["combo_name"] = group_df.apply(get_sorted_combos, args=(3, ), axis=1)
-        combo_set = set(group_df.combo_name.to_list())
+        # group_df["combo_name"] = group_df.apply(get_sorted_combos, args=(3, ), axis=1)
+        combo_set = set(group_df.unique_combo_name.to_list())
     return combo_set
 
 def set_add(a, b):
