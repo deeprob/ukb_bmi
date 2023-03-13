@@ -3,8 +3,8 @@ import pandas as pd
 
 
 phenotypes_data = "/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_general_pheno/data/ukb_phenotypes_general.csv"
-lifestyle_data = '/data5/deepro/ukbiobank/preprocess/rarecomb_pheno_prepare/data/lifestyle_v2.xlsx' # TODO: change
-parsed_lifestyle_data = '/data5/deepro/ukbiobank/preprocess/rarecomb_pheno_prepare/data/meta_pheno_table3.csv' # TODO: change
+lifestyle_data = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/data/lifestyle_v2.xlsx'
+parsed_lifestyle_data = '/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_lifestyle_factors/data/binarized_tables/meta/meta_pheno_table.csv'
 final_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british_lifestyle_regressed/data/samples.csv"
 
 

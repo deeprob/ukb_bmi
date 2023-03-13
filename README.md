@@ -32,7 +32,7 @@ This repo contains step-by-step guide to the analysis carried out for "Non-addit
 11. Supp. Table 11: "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/hpo/hpo_enrichment.csv"
 12. Supp. Table 12: "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/mgi/mgi_enrichment.csv"
 
-# TODO list
+# TODO list of figures
 ## Result 1
 1. Study design - Figure 1A :: **Major update**
     - make from scratch
@@ -64,8 +64,8 @@ This repo contains step-by-step guide to the analysis carried out for "Non-addit
 3. KEGG pathway enrichment - Figure 2C
     - add proper font and labels
 4. Tissue specific enrichment :: **Major update**
-    - conduct analysis
-    - make figures
+    - conduct analysis - COMPLETED on 03/08
+    - make heatmap figure
 
 ## Result 3
 1. Overlapping combos upset plot - Figure 3A
@@ -121,7 +121,7 @@ This repo contains step-by-step guide to the analysis carried out for "Non-addit
     - this can also be a figure
 
 ## Result 5
-1.  Change organization of the written portion :: **Major update**
+1.  Change organization of the written portion :: **Major update** - COMPLETED on 03/09
     - separate risk and protection
     - start with risk 
     - add examples of combinations that added more risk towards relevant disease
@@ -167,18 +167,18 @@ This repo contains step-by-step guide to the analysis carried out for "Non-addit
 
 ## Send data to geisenger for validation
 1. Add unique genes with their start and end coordinates from
-    - obesity risk
+    - obesity risk - COMPLETED on 03/08
     - obesity protection
     - low bmi association
 
-2. Add combo file in bedpe format for 
-    - obesity risk
+2. Add combo file in format for 
+    - obesity risk - COMPLETED on 03/08
     - obesity protection
     - low bmi association
 
-3. Annotate the variants already provided with a flag sign
+3. Annotate the variants already provided with a flag sign - COMPLETED on 03/08
 
-4. Ask for variants for the other genes
+4. Send email
 
 ## Abstract
 

@@ -166,7 +166,9 @@ def get_samples(node, sample_dir):
 icd_codes_of_interest = ['I10', 'E780', 'R074', 'I251', 'I259', 'E039', 'E11', 'Block M15-M19', 'K80', 'K81', 'K82', 'F32', 'F33', 'G30']
 # save icd codes to look at table
 icd_interest_save_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/tables/obesity_related_diseases_icd.csv"
-df_pheno.loc[df_pheno.coding.isin(icd_codes_of_interest)].to_csv(icd_interest_save_file, index=False)
+df_pheno_interest = df_pheno.loc[df_pheno.coding.isin(icd_codes_of_interest)]
+
+icd2nsamples_dict = {}
 
 for icd_code in icd_codes_of_interest:
     print(icd_code)
@@ -177,6 +179,7 @@ for icd_code in icd_codes_of_interest:
     cases_obese = samples_in_highest_group.intersection(samples_with_code)
     controls_obese = samples_in_highest_group.difference(samples_with_code)
     assert len(cases_obese)+len(controls_obese) == len(samples_in_highest_group)
+    icd2nsamples_dict[icd_code] = len(cases_obese)
     icd_code = icd_code.replace(" ", "")
     cases_file = f"/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/cases_controls/cases_{icd_code}.txt"
     controls_file = f"/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/obesity_related_diseases/data/cases_controls/controls_{icd_code}.txt"
@@ -187,3 +190,5 @@ for icd_code in icd_codes_of_interest:
         for sample in list(controls_obese):
             f.write(sample+'\n')
 
+df_pheno_interest["ncases"] = df_pheno_interest.coding.map(icd2nsamples_dict)
+df_pheno_interest.to_csv(icd_interest_save_file, index=False)

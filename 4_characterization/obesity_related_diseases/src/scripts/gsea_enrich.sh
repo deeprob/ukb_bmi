@@ -24,4 +24,4 @@ gene_file=$1
 out_file=$2
 echo $PWD
 
-Rscript /data5/deepro/ukbiobank/papers/bmi_project/4_characterization/lifestyle_white_british/src/scripts/gsea_enrich.R $gene_file $out_file
+Rscript /data5/deepro/ukbiobank/papers/bmi_project/4_characterization/obesity_related_diseases/src/scripts/gsea_enrich.R $gene_file $out_file

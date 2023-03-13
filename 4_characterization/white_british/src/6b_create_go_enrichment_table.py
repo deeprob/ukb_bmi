@@ -28,7 +28,6 @@ def create_gsea_enrichment_table(combo_dfs, ncombos_list, gsea_bash_path, save_d
     return
 
 if __name__ == "__main__":
-    gsea_file = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/published_studies/gsea_Catalog/data/gsea_genes_to_traits.csv"
     combinations2_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_2.csv"
     combinations3_file = "/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/white_british/data/parsed_tables/combo_3.csv"
     gsea_bash_path = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/src/scripts/gsea_enrich.sh"
