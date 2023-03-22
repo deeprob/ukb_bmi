@@ -6,14 +6,10 @@ import os
 from tqdm import tqdm
 
 
-def get_samples_with_combo(samples_file):
+def get_samples(samples_file):
     with open(samples_file, "r") as f:
         samples = set([l.strip() for l in f.readlines()])
     return samples
-
-def get_all_samples(samples_file):
-    df = pd.read_csv(samples_file, usecols=["eid"], dtype=str)
-    return set(df.eid.values)
 
 class Node:
     """
@@ -135,8 +131,8 @@ def get_samples_with_icd(icd_tree, icd_code, icd2sample_dir):
 
 def create_icd_enrichment_table(combo_samples_file, all_samples_file, icd_df, icd2sample_dir, save_file):
     # get samples with combinations
-    combo_samples = get_samples_with_combo(combo_samples_file)
-    all_samples = get_all_samples(all_samples_file)
+    combo_samples = get_samples(combo_samples_file)
+    all_samples = get_samples(all_samples_file)
     noncombo_samples = all_samples.difference(combo_samples)
     # create the icd tree
     root_pheno = Node(0, "0", "Root Phenotype")
@@ -176,8 +172,8 @@ def create_icd_enrichment_table(combo_samples_file, all_samples_file, icd_df, ic
 
 if __name__ == "__main__":
     icd_file = "/data5/deepro/ukbiobank/papers/bmi_project/0_data_download/ukb_icd10/data/coding19.tsv"
-    combo_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/icd/samples_bmidecile1to3.txt"
-    all_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/2_prepare_data_for_analysis/white_british/data/samples.csv"
+    combo_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/icd/combosamples_bmidecile1to3.txt"
+    all_samples_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/icd/allsamples_bmidecile1to3.txt"
     icd10codes2samples_dir = "/data5/deepro/ukbiobank/papers/bmi_project/1_parse_data/prepare_icd_codes/data/icd2sample"
     save_file = "/data5/deepro/ukbiobank/papers/bmi_project/4_characterization/white_british/data/enrichment/icd/bmidecile1to3.csv"
     
