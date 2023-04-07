@@ -41,7 +41,7 @@ for uci in combo_df.unique_combo_id:
             variant_type_dict["vtype"].append("-".join(sorted(group[1].Mut_type.unique())))
 
 # adding Quantile_rank column to the DataFrame
-decile_cut = pd.qcut(phenotypes_df['bmi_residuals'], 10, labels = False, retbins=True)
+decile_cut = pd.qcut(phenotypes_df["bmi_residuals"], 10, labels = False, retbins=True)
 decile_bins = ["-".join([str(int(decile_cut[1][i])), str(int(decile_cut[1][i+1]))]) for i in range(10)]
 decile_map_dict = dict(zip(range(10), decile_bins))
 phenotypes_df['Decile_rank'] = decile_cut[0]
@@ -53,11 +53,11 @@ vtype_bmi_df = pd.DataFrame(variant_type_dict).merge(phenotypes_df, left_on="eid
 vtype_bmi_df.to_csv(combo_samples_per_decile_save_file, index=False)
 
 with open(lowbmi_combo_samples_file, "w") as f:
-    for sample in vtype_bmi_df.loc[vtype_bmi_df.Decile_rank<3, "eid"]:
+    for sample in vtype_bmi_df.loc[vtype_bmi_df.Decile_rank<3, "eid"].unique():
         f.write(f"{sample}\n")
 
 with open(all_sample_file, "w") as f:
-    for sample in phenotypes_df.loc[phenotypes_df.Decile_rank<3, "eid"]:
+    for sample in phenotypes_df.loc[phenotypes_df.Decile_rank<3, "eid"].unique():
         f.write(f"{sample}\n")
 
 # profile_df = vtype_bmi_df.merge(icd_df, left_on="eid", right_on="eid")
