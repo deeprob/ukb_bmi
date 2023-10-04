@@ -48,10 +48,10 @@ if __name__ == "__main__":
 
     dfs = []
     for i in range(11):
-        df = pd.read_csv(f"/data6/deepro/bmi_project/0_data_preparation_and_download/phenotype/data/bmi_raw/bmi_block{i}.csv.gz")
+        df = pd.read_csv(f"/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_raw/bmi_block{i}.csv.gz")
         filtered_df = process_sample_info(df, categorical_fields, numerical_fields)
         dfs.append(filtered_df)
 
     df = pd.concat(dfs, axis=0)
-    save_file = "/data6/deepro/bmi_project/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz"
+    save_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz"
     df.to_csv(save_file, index=False)

@@ -4,7 +4,7 @@ import dxpy
 
 bmi_project_id = "project-GQpgZf8JX0KKbFBGK9yff4Zg"
 bmi_dir = "/phenotype_processing/bmi_info/"
-store_dir = "/data6/deepro/bmi_project/0_data_preparation_and_download/phenotype/data/bmi_raw/"
+store_dir = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_raw/"
 
 
 def download_folder(project_id, local_dir, dna_nexus_dir):

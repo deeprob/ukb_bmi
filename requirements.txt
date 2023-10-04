@@ -1,0 +1,6 @@
+dxpy
+ipykernel
+pandas
+scikit-learn
+seaborn
+pytables
