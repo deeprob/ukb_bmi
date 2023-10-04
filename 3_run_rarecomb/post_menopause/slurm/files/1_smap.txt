@@ -1,3 +1,0 @@
-/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/post_menopause/data/statistics/combo_2.csv /data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/post_menopause/data/parsed_tables/combo_2.csv high_bmi 2
-/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/post_menopause/data/statistics/combo_3.csv /data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/post_menopause/data/parsed_tables/combo_3.csv high_bmi 3
-/data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/post_menopause/data/statistics/combo_4.csv /data5/deepro/ukbiobank/papers/bmi_project/3_run_rarecomb/post_menopause/data/parsed_tables/combo_4.csv high_bmi 4
