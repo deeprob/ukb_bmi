@@ -11,8 +11,10 @@ def get_sparse_df(df):
     row_index = df.samples.map(samples_index)
     col_index = df.gene.map(gene_index)
     data = [1 for i in range(len(row_index))]
-    sparse_arr = coo_array((data, (row_index, col_index)), shape=(len(samples_index), len(gene_index)))
-    df = pd.DataFrame.sparse.from_spmatrix(sparse_arr, index=samples_index.keys(), columns=[f"Input_{g}" for g in gene_index.keys()])
+    # going back to dense because pandas was failing to handle 
+    # sparse representation for stack operation
+    sparse_arr = coo_array((data, (row_index, col_index)), shape=(len(samples_index), len(gene_index))).todense()
+    df = pd.DataFrame(sparse_arr, index=samples_index.keys(), columns=[f"Input_{g}" for g in gene_index.keys()])
     return df.reset_index().rename(columns={"index": "Sample_Name"})
 
 
@@ -24,7 +26,7 @@ def create_boolean_input_df(pheno_file, geno_file):
     samples_w_geno = geno_df.Sample_Name.isin(pheno_df.Sample_Name.astype(str))
     geno_pheno_df = geno_df.loc[samples_w_geno]
     print(len(geno_pheno_df))
-    geno_pheno_df["Output_BMI"] = geno_pheno_df.Sample_Name.map(pheno_dict).astype("Sparse")
+    geno_pheno_df["Output_BMI"] = geno_pheno_df.Sample_Name.map(pheno_dict)
     return geno_pheno_df
 
 
