@@ -1,5 +1,6 @@
 import pandas as pd
-
+import os
+import argparse
 
 def create_case_controls(bmi_file):
     df = pd.read_csv(bmi_file, usecols=["sample_names", "bmi_residuals"])
@@ -22,7 +23,10 @@ def create_case_control_df(pheno_file, save_file):
 
 
 if __name__ == "__main__":
-    bmi_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/train_cohort_bmi.csv.gz"
-    save_file = "/data6/deepro/ukb_bmi/1_data_processing/data/british/case_controls.csv"
+    parser = argparse.ArgumentParser(description='Rarecomb pipeline.')
+    parser.add_argument("bmi_file", type=str, help="Filepath of the phenotype file")
+    parser.add_argument("save_file", type=str, help="Filepath of the phenotype save file")
 
-    create_case_control_df(bmi_file, save_file)
+    cli_args = parser.parse_args()
+
+    create_case_control_df(cli_args.bmi_file, cli_args.save_file)

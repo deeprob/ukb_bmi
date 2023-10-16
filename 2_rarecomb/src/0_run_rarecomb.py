@@ -32,16 +32,17 @@ def create_boolean_input_df(pheno_file, geno_file):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='RNASeq Analysis read to counts pipeline.')
+    parser = argparse.ArgumentParser(description='Rarecomb pipeline.')
     parser.add_argument("pheno_file", type=str, help="Filepath of the phenotype file with binarized pheno")
     parser.add_argument("geno_file", type=str, help="Filepath of the genotype file with gene burden tables")
     parser.add_argument("save_file", type=str, help="Filepath of the combination save file")
     parser.add_argument("--ncombo", type=int, help="Number of genes forming a combination to mine", default=2)
     parser.add_argument("--min_indv", type=int, help="Minimum number of individuals satisfying a combination", default=5)
-    parser.add_argument("--max_freq", type=float, help="Maximum proportion of individuals with the combination", default=0.25)
+    parser.add_argument("--max_freq", type=float, help="Maximum proportion of individuals with the combination", default=0.95)
+    parser.add_argument("--log_dir", type=str, help="path to rarecomb log directory", default="")
 
     cli_args = parser.parse_args()
     boolean_input_df = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file)
-    out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq)
+    out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, logdir=cli_args.log_dir)
 
-    out_df.to_csv(cli_args.save_file)
+    out_df.to_csv(cli_args.save_file, index=False)
