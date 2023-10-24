@@ -2,6 +2,7 @@ import os
 import argparse
 import pandas as pd
 import subprocess
+import json
 import requests
 from typing import List
 import time
@@ -34,6 +35,7 @@ def get_combo_genes(combo_dfs: List[pd.DataFrame], save_dir):
     return list(geneset)
 
 def save_enrichr_results(results, save_file):
+    os.makedirs(os.path.dirname(save_file), exist_ok=True)
     with open(save_file, "w") as f:
         f.write("Term,p_val,adj_pval,odds_ratio,combined_score,genes\n")
         for lines in results:
@@ -76,8 +78,11 @@ def run_enrichment_helper(study_genes, population_genes, enrich_database, save_f
             )
         )
     if enrich_res.ok:
-        results = enrich_res.json()[enrich_database]
-        save_enrichr_results(results, save_file)
+        try:
+            results = json.loads(enrich_res.text)[enrich_database]
+            save_enrichr_results(results, save_file)
+        except:
+            print(f"Results could not be decoded for {enrich_database}")
     else:
         raise NotImplementedError(f"{enrich_database} enrichment not completed due to run enrichment failure")
     return

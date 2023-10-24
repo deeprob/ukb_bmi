@@ -5,12 +5,12 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=400:0:0
-#SBATCH --mem-per-cpu=2000G
+#SBATCH --mem-per-cpu=1000G
 #SBATCH --chdir /data6/deepro/ukb_bmi/2_rarecomb # TODO: set dir to project dir
 #SBATCH -o /data6/deepro/ukb_bmi/2_rarecomb/slurm/logs/0_out_%a.log # TODO: set slurm output file
 #SBATCH -e /data6/deepro/ukb_bmi/2_rarecomb/slurm/logs/0_err_%a.log # TODO: set slurm input file
 #SBATCH --exclude=durga,ramona # TODO: set nodelist
-#SBATCH --array 1-3
+#SBATCH --array 13-14
 
 export HOME="/data6/deepro/ukb_bmi"
 

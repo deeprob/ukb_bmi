@@ -40,8 +40,9 @@ if __name__=="__main__":
     ]
 
     combo_files = [
-        "/data6/deepro/ukb_bmi/2_rarecomb/data/british/combo2.csv",
-        "/data6/deepro/ukb_bmi/2_rarecomb/data/british/combo3.csv"
+        "/data6/deepro/ukb_bmi/2_rarecomb/data/british/combo2_001.csv",
+        "/data6/deepro/ukb_bmi/2_rarecomb/data/british/combo3_001.csv",
+        "/data6/deepro/ukb_bmi/2_rarecomb/data/british/combo4_001.csv"
     ]
     case_control_file = "/data6/deepro/ukb_bmi/1_data_processing/data/british/case_controls.csv"
     burden_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/processed_burden/all_gene_burden.csv.gz"

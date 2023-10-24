@@ -35,7 +35,7 @@ def table_merge(burden_dfs, parsed_gtf_file, save_file):
 
 
 if __name__ == "__main__":
-    chr_dir = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/burden_tables/"
+    chr_dir = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/burden_tables_0001/"
     burden_dfs = []
     for chrms in os.listdir(chr_dir):
         chrm_dir = os.path.join(chr_dir, chrms)
@@ -46,6 +46,6 @@ if __name__ == "__main__":
                 burden_dfs.append(df)  
     gtf_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/gene_annotations/gencode.v44.basic.annotation.gtf"
     parsed_gtf_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/gene_annotations/gencode.v44.basic.annotation.parsed.csv"
-    save_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/processed_burden/all_gene_burden.csv.gz"
+    save_file = "/data6/deepro/ukb_bmi/0_data_preparation_and_download/genotype/data/processed_burden/all_gene_burden_0001.csv.gz"
     get_proten_coding_genes(gtf_file, parsed_gtf_file)
     table_merge(burden_dfs, parsed_gtf_file, save_file)

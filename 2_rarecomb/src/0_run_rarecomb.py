@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from pyrarecomb.compare_enrichment import compare_enrichment
 from scipy.sparse import coo_array
@@ -39,10 +40,12 @@ if __name__ == "__main__":
     parser.add_argument("--ncombo", type=int, help="Number of genes forming a combination to mine", default=2)
     parser.add_argument("--min_indv", type=int, help="Minimum number of individuals satisfying a combination", default=5)
     parser.add_argument("--max_freq", type=float, help="Maximum proportion of individuals with the combination", default=0.95)
+    parser.add_argument("--adj_pval_type", type=str, help="Multiple testing method", default="BH")
     parser.add_argument("--log_dir", type=str, help="path to rarecomb log directory", default="")
 
     cli_args = parser.parse_args()
     boolean_input_df = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file)
-    out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, logdir=cli_args.log_dir)
+    os.makedirs(cli_args.log_dir, exist_ok=True)
+    out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, adj_pval_type=cli_args.adj_pval_type, logdir=cli_args.log_dir)
 
     out_df.to_csv(cli_args.save_file, index=False)
