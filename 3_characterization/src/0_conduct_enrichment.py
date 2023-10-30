@@ -6,6 +6,17 @@ import json
 import requests
 from typing import List
 import time
+import numpy as np
+import pandas as pd
+from scipy.stats import kstest,ttest_ind
+import seaborn as sns
+from matplotlib.ticker import MultipleLocator
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+matplotlib.rcParams.update({'font.size': 14, 'axes.linewidth': 2, 'xtick.major.width': 1.5, 'xtick.major.size': 7, 'ytick.major.width': 1.5, 'ytick.major.size': 7})
+from matplotlib.backends.backend_pdf import PdfPages
 
 """
 Resources:
@@ -87,12 +98,49 @@ def run_enrichment_helper(study_genes, population_genes, enrich_database, save_f
         raise NotImplementedError(f"{enrich_database} enrichment not completed due to run enrichment failure")
     return
 
+def save_pdf(save_file, fig):
+    pdf = PdfPages(save_file)
+    pdf.savefig(fig, bbox_inches='tight', dpi=300)
+    pdf.close()
+    return
+
+def create_dot_plot(go_file, terms_col="Term", odds_ratio_col="odds_ratio", gene_col="genes", gene_pval_col="adj_pval", ncat=20, figsize=(5,7)):
+    # read and parse go file
+    go_df = pd.read_csv(go_file)
+    go_df[terms_col] = go_df[terms_col].apply(lambda x: x[0].upper() + x[1:])
+    go_df["gene_counts"] = go_df[gene_col].apply(lambda x: len(x.split("|")))
+    plot_df = go_df.sort_values(gene_pval_col).head(ncat)
+    
+    plot_df = plot_df.sort_values(odds_ratio_col, ascending=False)
+    fig, axes = plt.subplots(figsize=figsize)
+    norm = plt.Normalize(0, 0.05) # plot_df['qvalue'].min(), plot_df['qvalue'].max()
+    sns_ax = sns.scatterplot(
+        data=plot_df, x=odds_ratio_col, y=terms_col, 
+        size="gene_counts", hue=gene_pval_col, ax=axes, sizes=(100, 300), palette='RdBu', hue_norm=norm, linewidth=0.5, edgecolor="k"
+        )
+    sns_ax.legend(loc='center left', bbox_to_anchor=(1.5, 0.5), ncol=1)
+    sns_ax.set_xlabel("Gene ratio")
+    sns_ax.set_ylabel("")
+    sns_ax.set_axisbelow(True)
+    sns_ax.yaxis.grid(ls="--", which="major")
+    # Add a colorbar
+    sm = plt.cm.ScalarMappable(cmap="RdBu", norm=norm)
+    sm.set_array([])
+    sns_ax.figure.colorbar(sm, ax=axes, shrink=0.25, aspect=5, ticks=[0, 0.01, 0.05])
+    # axes.margins(x=0.1, y=0.1)
+    return fig, axes
 
 def run_enrichment(study_genes, population_genes, save_dir, enrich_database=["Allen_Brain_Atlas_10x_scRNA_2021", "dbGaP", "GO_Biological_Process_2023", "GTEx_Tissues_V8_2023", "GWAS_Catalog_2023", "Human_Phenotype_Ontology", "KEGG_2021_Human", "MGI_Mammalian_Phenotype_Level_4_2021", "OMIM_Disease"]):
     for ed in enrich_database:
         print(ed)
-        save_file = os.path.join(save_dir, f"{ed}_enrich.csv")
-        run_enrichment_helper(study_genes, population_genes, ed, save_file)
+        enrich_file = os.path.join(save_dir, f"{ed}_enrich.csv")
+        run_enrichment_helper(study_genes, population_genes, ed, enrich_file)
+        fig, ax = create_dot_plot(enrich_file, ncat=20)
+        ax.set_title(f"{ed}")
+        fig_save_dir = os.path.join(save_dir, "figures")
+        os.makedirs(fig_save_dir, exist_ok=True)
+        fig_save_file = os.path.join(fig_save_dir, f"{ed}.pdf")
+        save_pdf(fig_save_file, fig)
         time.sleep(30)
     return
 
