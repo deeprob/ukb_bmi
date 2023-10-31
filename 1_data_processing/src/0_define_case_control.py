@@ -28,5 +28,5 @@ if __name__ == "__main__":
     parser.add_argument("save_file", type=str, help="Filepath of the phenotype save file")
 
     cli_args = parser.parse_args()
-
+    os.makedirs(os.path.dirname(cli_args.save_file), exist_ok=True)
     create_case_control_df(cli_args.bmi_file, cli_args.save_file)

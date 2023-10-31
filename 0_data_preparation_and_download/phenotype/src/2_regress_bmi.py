@@ -10,7 +10,9 @@ def filter_data(df, mode):
     filter_mode_dict = {
         "british": ('`ethnic_background` == "British"', '`ethnic_background` != "British"', ["genetic_sex"], ["age"] + [f"genetic_pca{i}" for i in range(1, 40)], ["bmi_prs"]),
         "british_male": ('(`ethnic_background` == "British") & (`genetic_sex` == "Male")', '(`ethnic_background` != "British") & (`genetic_sex` == "Male")', [], ["age"] + [f"genetic_pca{i}" for i in range(1, 40)], ["bmi_prs"]),
-        "british_female": ('(`ethnic_background` == "British") & (`genetic_sex` == "Female")', '(`ethnic_background` != "British") & (`genetic_sex` == "Female")', [], ["age"] + [f"genetic_pca{i}" for i in range(1, 40)], ["bmi_prs"])
+        "british_female": ('(`ethnic_background` == "British") & (`genetic_sex` == "Female")', '(`ethnic_background` != "British") & (`genetic_sex` == "Female")', [], ["age"] + [f"genetic_pca{i}" for i in range(1, 40)], ["bmi_prs"]),
+        "pre_menopause": ('(`ethnic_background` == "British") & (`genetic_sex` == "Female") & (`menopause` == "No")', '(`ethnic_background` != "British") & (`genetic_sex` == "Female") & (`menopause` == "No")', [], ["age"] + [f"genetic_pca{i}" for i in range(1, 40)], ["bmi_prs"]),
+        "post_menopause": ('(`ethnic_background` == "British") & (`genetic_sex` == "Female") & (`menopause` == "Yes")', '(`ethnic_background` != "British") & (`genetic_sex` == "Female") & (`menopause` == "Yes")', [], ["age"] + [f"genetic_pca{i}" for i in range(1, 40)], ["bmi_prs"])
     }
     train_query, test_query, categorical_cols, numerical_cols, scaled_numerical_cols = filter_mode_dict[mode]
     train_df = df.query(train_query)
@@ -57,6 +59,7 @@ if __name__ == "__main__":
     # filter samples that do not have information on the required fields
     required_cols_for_analysis = categorical_cols + numerical_cols + scaled_numerical_cols + ["bmi"]
     train_df = train_df.loc[~train_df.loc[:, required_cols_for_analysis].isna().any(axis=1)]
+    os.makedirs(cli_args.save_dir, exist_ok=True)
     # regress and save file to directory as training cohort
     train_save_file = os.path.join(cli_args.save_dir, "train_cohort_bmi.csv.gz") 
     get_scaled_bmi(train_df, categorical_cols, numerical_cols, scaled_numerical_cols, train_save_file)

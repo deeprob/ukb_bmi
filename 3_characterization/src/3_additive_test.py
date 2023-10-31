@@ -108,6 +108,7 @@ if __name__=="__main__":
     y_pred = scaler.inverse_transform(y_pred)
 
     test_combo_gene_df[f"{pheno_name}_pred"] = y_pred
+    os.makedirs(os.path.dirname(cli_args.save_file), exist_ok=True)
     test_combo_gene_df.loc[:, [f"{pheno_name}", f"{pheno_name}_pred"]].to_csv(cli_args.save_file, index=True)
 
     plot_df = test_combo_gene_df.reset_index().rename(columns={f"{pheno_name}": "Observed", f"{pheno_name}_pred": "Expected"}).melt(id_vars="sample_names")

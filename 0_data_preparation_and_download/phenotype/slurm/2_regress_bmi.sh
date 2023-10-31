@@ -10,7 +10,7 @@
 #SBATCH -o /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/slurm/logs/2_out_%a.log # TODO: set slurm output file
 #SBATCH -e /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/slurm/logs/2_err_%a.log # TODO: set slurm input file
 #SBATCH --exclude=durga,ramona # TODO: set nodelist
-#SBATCH --array 1
+#SBATCH --array 4-5
 
 export HOME="/data6/deepro/ukb_bmi"
 

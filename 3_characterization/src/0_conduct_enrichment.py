@@ -154,8 +154,9 @@ if __name__=="__main__":
     cli_args = parser.parse_args()
     combo_genes_dfs = [pd.read_csv(cgf) for cgf in cli_args.combo_files]
     pop_gene_df = pd.read_csv(cli_args.gene_file)
+    
+    os.makedirs(cli_args.save_dir, exist_ok=True)
 
     study_genes = get_combo_genes(combo_genes_dfs, cli_args.save_dir)
     population_genes = get_population_geneset(pop_gene_df, cli_args.save_dir)
-
     run_enrichment(study_genes, population_genes, cli_args.save_dir)

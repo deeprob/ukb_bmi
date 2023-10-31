@@ -1,1 +1,5 @@
 /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz british /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/british
+/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz british_male /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/british_male
+/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz british_female /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/british_female
+/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz pre_menopause /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/pre_menopause
+/data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/filtered_bmi_info.csv.gz post_menopause /data6/deepro/ukb_bmi/0_data_preparation_and_download/phenotype/data/bmi_processed/post_menopause
