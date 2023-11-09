@@ -111,6 +111,7 @@ if __name__=="__main__":
     parser.add_argument("--genotype_file", type=str, help="Filepath of the gene burden file")
     parser.add_argument("--phenotype_file", type=str, help="Filepath of the cohort phenotype file")
     parser.add_argument("--save_file", type=str, help="Filepath where combo info will be stored")
+    parser.add_argument("--lifestyle_file", type=str, help="Filepath of the lifestyle factor matrix", default="")
 
     cli_args = parser.parse_args()
 
@@ -118,6 +119,14 @@ if __name__=="__main__":
     phenotype_df = pd.read_csv(cli_args.phenotype_file, usecols=["sample_names", "bmi", "bmi_prs"])
     combo_dfs = [pd.read_csv(cf, usecols=["uniq_items"]) for cf in cli_args.combo_files]
     combo_df = pd.concat(combo_dfs).reset_index(drop=True)
+
+    if cli_args.lifestyle_file:
+        lifestyle_df = pd.read_csv(cli_args.lifestyle_file)
+        cols_to_melt = list(lifestyle_df.columns)
+        lifestyle_df = lifestyle_df.melt(id_vars="Sample_Name", value_vars=cols_to_melt, var_name="gene")
+        lifestyle_df = lifestyle_df.loc[lifestyle_df.value>0].drop(columns="value")
+        lifestyle_df = lifestyle_df.groupby("gene").agg(lambda x: ",".join(map(str, x))).reset_index().rename(columns={"Sample_Name": "samples"})
+        genotype_df = pd.concat((genotype_df, lifestyle_df)).reset_index(drop=True)
 
     combo_df = get_combos_with_sample_info(combo_df, phenotype_df, genotype_df)
     os.makedirs(os.path.dirname(cli_args.save_file), exist_ok=True)

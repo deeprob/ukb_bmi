@@ -33,11 +33,11 @@ def get_population_geneset(gene_burden_df, save_dir):
     return list(popgenset)
 
 
-def get_combo_genes(combo_dfs: List[pd.DataFrame], save_dir):
+def get_combo_genes(combo_dfs: List[pd.DataFrame], save_dir, lifestyle_factors):
     geneset = set()
     for combo_df in combo_dfs:
         genes = set("|".join(combo_df.uniq_items.values).split("|"))
-        genes = [g.replace("Input_", "", 1) for g in genes]
+        genes = [g.replace("Input_", "", 1) for g in genes if g not in lifestyle_factors]
         geneset = geneset.union(genes)
     genefile = os.path.join(save_dir, "genes.list")
     with open(genefile, "w") as f:
@@ -150,13 +150,19 @@ if __name__=="__main__":
     parser.add_argument("--combo_files", type=str, help="Filepath of the combo files given by Rarecomb", nargs='+')
     parser.add_argument("--gene_file", type=str, help="Filepath of the gene burden file")
     parser.add_argument("--save_dir", type=str, help="Filepath of the save dir for enrichment results")
+    parser.add_argument("--lifestyle_file", type=str, help="Filepath of the lifestyle factor matrix", default="")
 
     cli_args = parser.parse_args()
     combo_genes_dfs = [pd.read_csv(cgf) for cgf in cli_args.combo_files]
     pop_gene_df = pd.read_csv(cli_args.gene_file)
-    
+    if cli_args.lifestyle_file:
+        lifestyle_df = pd.read_csv(cli_args.lifestyle_file, index_col=0, nrows=1)
+        lifestyle_factors = {f"Input_{c}" for c in lifestyle_df.columns}
+    else:
+        lifestyle_factors = set()
+
     os.makedirs(cli_args.save_dir, exist_ok=True)
 
-    study_genes = get_combo_genes(combo_genes_dfs, cli_args.save_dir)
+    study_genes = get_combo_genes(combo_genes_dfs, cli_args.save_dir, lifestyle_factors)
     population_genes = get_population_geneset(pop_gene_df, cli_args.save_dir)
     run_enrichment(study_genes, population_genes, cli_args.save_dir)

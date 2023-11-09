@@ -10,7 +10,7 @@
 #SBATCH -o /data6/deepro/ukb_bmi/3_characterization/slurm/logs/3_out_%a.log # TODO: set slurm output file
 #SBATCH -e /data6/deepro/ukb_bmi/3_characterization/slurm/logs/3_err_%a.log # TODO: set slurm input file
 #SBATCH --exclude=durga,ramona # TODO: set nodelist
-#SBATCH --array 6
+#SBATCH --array 7
 
 export HOME="/data6/deepro/ukb_bmi"
 

@@ -32,7 +32,7 @@ def process_sample_info(df, categorical_fields, numerical_fields):
     # filter samples with nan values for numerical fields
     df = df.loc[~df.loc[:, numerical_fields].isna().any(axis=1)]
 
-    return df
+    return df.loc[:, ["sample_names"] + numerical_fields + categorical_fields]
 
 
 if __name__ == "__main__":

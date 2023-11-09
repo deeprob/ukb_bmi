@@ -83,6 +83,7 @@ if __name__=="__main__":
     parser.add_argument("phenotype_file", type=str, help="Filepath of the cohort phenotype file")
     parser.add_argument("combo_gene_file", type=str, help="Filepath of the combo info file")
     parser.add_argument("save_file", type=str, help="Filepath where combo info will be stored")
+    parser.add_argument("--lifestyle_file", type=str, help="Filepath of the lifestyle factor matrix", default="")
 
     cli_args = parser.parse_args()
     pheno_name = "bmi"
@@ -94,6 +95,14 @@ if __name__=="__main__":
 
     combo_genes = get_uniq_items(combo_gene_df.uniq_items)
     combo_samples = get_uniq_items(combo_gene_df.combo_samples)
+
+    if cli_args.lifestyle_file:
+        lifestyle_df = pd.read_csv(cli_args.lifestyle_file)
+        cols_to_melt = list(lifestyle_df.columns)
+        lifestyle_df = lifestyle_df.melt(id_vars="Sample_Name", value_vars=cols_to_melt, var_name="gene")
+        lifestyle_df = lifestyle_df.loc[lifestyle_df.value>0].drop(columns="value")
+        lifestyle_df = lifestyle_df.groupby("gene").agg(lambda x: ",".join(map(str, x))).reset_index().rename(columns={"Sample_Name": "samples"})
+        genotype_df = pd.concat((genotype_df, lifestyle_df)).reset_index(drop=True)
 
     train_combo_gene_df, test_combo_gene_df = prepare_model_data(genotype_df, phenotype_df, combo_genes, combo_samples)
     X_train, y_train = get_features_labels(train_combo_gene_df, pheno_name)

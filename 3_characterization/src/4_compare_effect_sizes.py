@@ -32,17 +32,17 @@ def get_overlapping_samples(sample_set, overlap_set):
     return len(sample_set.intersection(overlap_set))/len(overlap_set)
 
 
-def get_effect_size(gene_list, case_control_df, burden_df, combo_samples, save_file):
-    burden_df = burden_df.loc[burden_df.gene.isin(gene_list)]
+def get_effect_size(gene_list, case_control_df, genotype_df, combo_samples, save_file):
+    genotype_df = genotype_df.loc[genotype_df.gene.isin(gene_list)]
     case_samples = set(case_control_df.loc[case_control_df.Output_BMI==1].Sample_Name.astype(str).values)
     control_samples = set(case_control_df.loc[case_control_df.Output_BMI==0].Sample_Name.astype(str).values)
     # from case and control, eliminate samples who have the combinations
     case_samples = case_samples.difference(combo_samples)
     control_samples = control_samples.difference(combo_samples)
-    burden_df["prop_case_samples"] = burden_df.samples.apply(get_overlapping_samples, args=(case_samples, ))
-    burden_df["prop_control_samples"] = burden_df.samples.apply(get_overlapping_samples, args=(control_samples, ))
-    burden_df["Effect_Size"] = burden_df.apply(lambda x: proportion_effectsize(x.prop_case_samples, x.prop_control_samples), axis=1)
-    burden_df.loc[:, ["gene", "Effect_Size"]].to_csv(save_file, index=False)
+    genotype_df["prop_case_samples"] = genotype_df.samples.apply(get_overlapping_samples, args=(case_samples, ))
+    genotype_df["prop_control_samples"] = genotype_df.samples.apply(get_overlapping_samples, args=(control_samples, ))
+    genotype_df["Effect_Size"] = genotype_df.apply(lambda x: proportion_effectsize(x.prop_case_samples, x.prop_control_samples), axis=1)
+    genotype_df.loc[:, ["gene", "Effect_Size"]].to_csv(save_file, index=False)
     return
 
 def create_efs_table(files, filenames):
@@ -106,11 +106,20 @@ if __name__=="__main__":
     parser.add_argument("--genotype_file", type=str, help="Filepath of the gene burden file")
     parser.add_argument("--case_control_file", type=str, help="Filepath of the cohort phenotype file")
     parser.add_argument("--save_files", type=str, help="Filepath where combo info will be stored", nargs='+')
+    parser.add_argument("--lifestyle_file", type=str, help="Filepath of the lifestyle factor matrix", default="")
 
     cli_args = parser.parse_args()
 
     case_control_df = pd.read_csv(cli_args.case_control_file)
-    burden_df = pd.read_csv(cli_args.genotype_file)
+    genotype_df = pd.read_csv(cli_args.genotype_file)
+    if cli_args.lifestyle_file:
+        lifestyle_df = pd.read_csv(cli_args.lifestyle_file)
+        cols_to_melt = list(lifestyle_df.columns)
+        lifestyle_df = lifestyle_df.melt(id_vars="Sample_Name", value_vars=cols_to_melt, var_name="gene")
+        lifestyle_df = lifestyle_df.loc[lifestyle_df.value>0].drop(columns="value")
+        lifestyle_df = lifestyle_df.groupby("gene").agg(lambda x: ",".join(map(str, x))).reset_index().rename(columns={"Sample_Name": "samples"})
+        genotype_df = pd.concat((genotype_df, lifestyle_df)).reset_index(drop=True)
+
     combo_dfs = [pd.read_csv(cf).loc[:, ["Case_Samples", "Control_Samples"]] for cf in cli_args.combo_files]
     combo_df = pd.concat(combo_dfs)
     combo_samples = set("|".join(combo_df.values.flatten().astype(str)).split("|"))
@@ -118,7 +127,7 @@ if __name__=="__main__":
     for glf,sf in zip(cli_args.gene_files, cli_args.save_files):
         gene_list = read_genes(glf)
         os.makedirs(os.path.dirname(sf), exist_ok=True)
-        get_effect_size(gene_list, case_control_df, burden_df, combo_samples, sf)
+        get_effect_size(gene_list, case_control_df, genotype_df, combo_samples, sf)
 
     files = cli_args.save_files + cli_args.combo_files
     filenames = [os.path.splitext(os.path.basename(f))[0] for f in files]
