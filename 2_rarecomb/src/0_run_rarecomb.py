@@ -21,15 +21,15 @@ def get_sparse_df(df):
     return df.reset_index().rename(columns={"index": "Sample_Name"})
 
 
-def create_boolean_input_df(pheno_file, geno_file, lifestyle_file):
-    pheno_df = pd.read_csv(pheno_file, usecols=["Sample_Name", "Output_BMI"])
-    pheno_dict = {str(sn): bm for sn,bm in zip(pheno_df.Sample_Name, pheno_df.Output_BMI)}
+def create_boolean_input_df(pheno_file, geno_file, lifestyle_file, phenotype):
+    pheno_df = pd.read_csv(pheno_file, usecols=["Sample_Name", f"Output_{phenotype}"])
+    pheno_dict = {str(sn): bm for sn,bm in zip(pheno_df.Sample_Name, pheno_df[f"Output_{phenotype}"])}
     geno_df = pd.read_csv(geno_file, usecols=["gene", "samples"])
     geno_df = get_sparse_df(geno_df)
     samples_w_geno = geno_df.Sample_Name.isin(pheno_df.Sample_Name.astype(str))
     geno_pheno_df = geno_df.loc[samples_w_geno]
     print(len(geno_pheno_df))
-    geno_pheno_df["Output_BMI"] = geno_pheno_df.Sample_Name.map(pheno_dict)
+    geno_pheno_df[f"Output_{phenotype}"] = geno_pheno_df.Sample_Name.map(pheno_dict)
     if lifestyle_file:
         lifestyle_df = pd.read_csv(lifestyle_file)
         lifestyle_df["Sample_Name"] = lifestyle_df["Sample_Name"].astype(str)
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("pheno_file", type=str, help="Filepath of the phenotype file with binarized pheno")
     parser.add_argument("geno_file", type=str, help="Filepath of the genotype file with gene burden tables")
     parser.add_argument("save_file", type=str, help="Filepath of the combination save file")
+    parser.add_argument("--phenotype", type=str, help="The phenotype binarized in phenofile", default="BMI")
     parser.add_argument("--lifestyle_file", type=str, help="Filepath of the lifestyle factors file to add as input", default="")
     parser.add_argument("--ncombo", type=int, help="Number of genes forming a combination to mine", default=2)
     parser.add_argument("--min_indv", type=int, help="Minimum number of individuals satisfying a combination", default=5)
@@ -56,10 +57,10 @@ if __name__ == "__main__":
     os.makedirs(cli_args.log_dir, exist_ok=True)
     
     if not cli_args.lifestyle_file:
-        boolean_input_df = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file, cli_args.lifestyle_file)
+        boolean_input_df = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file, cli_args.lifestyle_file, cli_args.phenotype)
         out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, adj_pval_type=cli_args.adj_pval_type, logdir=cli_args.log_dir)
     else:
-        boolean_input_df, lifestyles = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file, cli_args.lifestyle_file)
+        boolean_input_df, lifestyles = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file, cli_args.lifestyle_file, cli_args.phenotype)
         out_df = compare_enrichment_modifiers(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, lifestyles, adj_pval_type=cli_args.adj_pval_type, logdir=cli_args.log_dir)
     
     out_df.to_csv(cli_args.save_file, index=False)

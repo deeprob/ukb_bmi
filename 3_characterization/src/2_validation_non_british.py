@@ -40,14 +40,14 @@ def plot_box(boxdf):
     # Adjust Axis
     # ax.set_yticks([-0.02, 0, 0.02, 0.04])
     ax.set_xlim((-1, 2))
-    ax.set_ylim((12, 41.5))
+    ax.set_ylim((12, 45))
     # ax.set_ylabel('Percentage')
     ax.set_xticklabels(["Non\ncarrier", "Carrier"], rotation=45, ha="center", fontsize=14)
     ax.set_xlabel("")
     ax.set_ylabel("BMI")
-    ax.hlines(41, 0, 1, color="k")
+    ax.hlines(43, 0, 1, color="k")
     ttest_pval = ttest_ind(non_combo_hit_pheno.bmi, combo_hit_pheno.bmi, alternative="less").pvalue
-    ax.text(0.5, 42, f"P = {ttest_pval:.2E}", ha="center", va="bottom", fontsize=14)
+    ax.text(0.5, 44, f"P = {ttest_pval:.2E}", ha="center", va="bottom", fontsize=14)
 
     # Remove Spines
     ax.spines['right'].set_visible(False)

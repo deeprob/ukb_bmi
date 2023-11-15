@@ -100,7 +100,7 @@ def create_decile_rank_plot(phenotype_samples_df):
         ax[1].text(
             rect.get_x() + rect.get_width() / 2, height + 5, f"{height}", ha="center", va="bottom"
         )
-    ax[1].set_ylim(-100, 3500)
+    ax[1].set_ylim(-100, 6500)
     ax[1].spines[['right', 'top']].set_visible(False)
 
     return fig,ax

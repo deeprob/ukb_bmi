@@ -1,0 +1,1 @@
+/data6/deepro/ukb_bmi/0_data_preparation_and_download/icd_codes/data/icd_raw /data6/deepro/ukb_bmi/1_data_processing/data/british/case_controls.csv /data6/deepro/ukb_bmi/0_data_preparation_and_download/icd_codes/data/icd_tree/coding19.tsv /data6/deepro/ukb_bmi/1_data_processing/data/comorbidities
