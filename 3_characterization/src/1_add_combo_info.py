@@ -24,9 +24,10 @@ def save_pdf(save_file, fig):
     pdf.close()
     return
 
-def get_combo_samples(combos, genotype_df):
+def get_combo_samples(combos, genotype_df, cohort_samples):
     samples_per_gene = genotype_df.loc[genotype_df.gene.isin(combos)].samples.str.split(",").values
     samples_per_combo = reduce(lambda a,b: set(a).intersection(set(b)), samples_per_gene)
+    samples_per_combo = cohort_samples.intersection(samples_per_combo)
     return "|".join(sorted(samples_per_combo))
 
 def get_sample_bmi_info(samples, phenotype_df):
@@ -44,8 +45,9 @@ def get_mean_values(sample_bmi_info):
     return np.mean(sample_bmi_info)
 
 def get_combos_with_sample_info(combo_df, phenotype_df, genotype_df):
+    cohort_samples = set(phenotype_df.sample_names.astype(str))
     combo_df["combos"] = combo_df.uniq_items.apply(lambda x: [g.replace("Input_", "", 1) for g in x.split("|")])
-    combo_df["combo_samples"] = combo_df.combos.apply(get_combo_samples, args=(genotype_df, ))
+    combo_df["combo_samples"] = combo_df.combos.apply(get_combo_samples, args=(genotype_df, cohort_samples))
     combo_df = pd.concat((combo_df, combo_df.combo_samples.apply(get_sample_bmi_info, args=(phenotype_df, ))), axis=1)
     combo_df["mean_bmi"] = combo_df.combo_samples_bmi.apply(get_mean_values)
     combo_df["mean_bmi_prs"] = combo_df.combo_samples_bmi_prs.apply(get_mean_values)

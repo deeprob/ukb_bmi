@@ -1,0 +1,1 @@
+wget -P /data6/deepro/ukb_bmi/0_data_preparation_and_download/ppi_network/data https://stringdb-downloads.org/download/protein.links.v12.0/9606.protein.links.v12.0.txt.gz
