@@ -58,7 +58,7 @@ if __name__ == "__main__":
     
     if not cli_args.lifestyle_file:
         boolean_input_df = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file, cli_args.lifestyle_file, cli_args.phenotype)
-        out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, adj_pval_type=cli_args.adj_pval_type, logdir=cli_args.log_dir)
+        out_df = compare_enrichment(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, adj_pval_type=cli_args.adj_pval_type, logdir=cli_args.log_dir) # type: ignore # type: ignore
     else:
         boolean_input_df, lifestyles = create_boolean_input_df(cli_args.pheno_file, cli_args.geno_file, cli_args.lifestyle_file, cli_args.phenotype)
         out_df = compare_enrichment_modifiers(boolean_input_df, cli_args.ncombo, cli_args.min_indv, cli_args.max_freq, lifestyles, adj_pval_type=cli_args.adj_pval_type, logdir=cli_args.log_dir)

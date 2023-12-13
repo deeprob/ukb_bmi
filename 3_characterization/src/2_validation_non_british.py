@@ -66,7 +66,7 @@ if __name__=="__main__":
     cohort_df = pd.read_csv(cli_args.cohort_file, usecols=["sample_names", "bmi", "bmi_prs"])
     combo_samples_df = pd.read_csv(cli_args.combo_samples_file)
 
-    all_combo_samples = set("|".join(combo_samples_df.combo_samples.values).split("|"))
+    all_combo_samples = set("|".join(combo_samples_df.combo_samples.fillna("").values).split("|"))
     cohort_df["combo_carriers"] = cohort_df.sample_names.astype(str).isin(all_combo_samples)
     combo_hit_pheno = cohort_df.loc[cohort_df.combo_carriers==True]
     non_combo_hit_pheno = cohort_df.loc[cohort_df.combo_carriers==False]

@@ -11,7 +11,7 @@ def create_case_controls(bmi_file, case_control_mode):
     df["bmi_decile"] = pd.qcut(df.bmi_residuals, q=10, labels=False)
     query_dict = {
         "risk": "(`bmi_decile`>7)|(`bmi_decile`<3)",
-        "protective": "(`bmi_decile`>6)|((`bmi_decile`<3)&(`bmi_decile`>0))"
+        "protective": "(`bmi_decile`>6)|(`bmi_decile`<2)"
     }
     # select top two and bottom three
     df = df.query(query_dict[case_control_mode])

@@ -144,13 +144,27 @@ def create_icd_samples_file(icd_raw_dir):
     icd_samples_df = icd_samples_df.explode("icd").groupby("icd").agg(lambda x: "|".join(map(str,x)))
     return icd_samples_df
 
-def create_case_controls_file(icd_codes_of_interest, cohort_samples, pheno_tree, root_pheno, c2nodeid_dict, save_dir):
+def create_case_controls_file(icd_codes_of_interest, cohort_case_samples, pheno_tree, root_pheno, c2nodeid_dict, save_dir, case_cont_mode):
     for icdc in icd_codes_of_interest:
         icdc_node = pheno_tree.node_dict[c2nodeid_dict[icdc]]
-        case_samples = icdc_node.get_samples()
-        case_samples = cohort_samples.intersection(case_samples)
-        case_samples_top = get_samples_in_top_parent(icdc_node, pheno_tree, root_pheno)
-        control_samples = cohort_samples.difference(case_samples_top)
+        comorbid_samples = icdc_node.get_samples()
+        comorbid_samples_top = get_samples_in_top_parent(icdc_node, pheno_tree, root_pheno)
+        
+        if case_cont_mode=="risk":
+            # people who have both obesity and the comorbidity
+            case_samples = cohort_case_samples.intersection(comorbid_samples)
+        else:
+            # people who have obesity but not the comorbidity or its related parent
+            case_samples = cohort_case_samples.difference(comorbid_samples)
+
+        if case_cont_mode=="risk":
+            # people who have either obesity or comorbidity not both
+            control_samples = cohort_case_samples.difference(comorbid_samples_top).union(comorbid_samples.difference(cohort_case_samples))
+        else:
+            # people who have obesity and the comorbidity and those who just have the comorbidity and its related parents
+            control_samples = cohort_case_samples.intersection(comorbid_samples).union(comorbid_samples_top.difference(cohort_case_samples))
+
+        print(icdc, len(case_samples), len(control_samples))
         icd_meaning = icdc_node.meaning.replace(" ", "")
         data_dict = {
             "Sample_Name": list(case_samples) + list(control_samples),
@@ -168,6 +182,7 @@ if __name__=="__main__":
     parser.add_argument("cohort_samples_file", type=str, help="Filepath of the cohort samples with bmi cases and control")
     parser.add_argument("icd_codes_file", type=str, help="Filepath of the icd codes with parent info")
     parser.add_argument("save_dir", type=str, help="Filepath where case control files will be stored")
+    parser.add_argument("--case_cont_mode", type=str, help="whether mining for risk or protective combos: one of risk/protective", default="risk")
 
     cli_args = parser.parse_args()
 
@@ -175,9 +190,9 @@ if __name__=="__main__":
     cohort_samples_df = pd.read_csv(cli_args.cohort_samples_file)
     icd_codes_df = pd.read_csv(cli_args.icd_codes_file, usecols=["coding", "meaning", "node_id", "parent_id"], sep="\t")
 
-    icd_codes_of_interest = ['Block I10-I15', 'Block E10-E14', 'Block M15-M19', 'Block E70-E90', 'Block K80-K87', 'Block I20-I25']
-    cohort_samples = set(cohort_samples_df.loc[cohort_samples_df.Output_BMI==1, "Sample_Name"].astype(str).values)
+    icd_codes_of_interest = ['Block M15-M19', 'Block K80-K87', 'E780',  'Block I20-I25', 'I10', 'E11', 'E039'] # Arthrosis, Gall bladder biliary tract pancreas, Pure hypercholesterolaemia, Ischaemic heart disease, Essential (primary) hypertension, Non-insulin-dependent diabetes mellitus, Hypothyroidism
+    cohort_case_samples = set(cohort_samples_df.loc[cohort_samples_df.Output_BMI==1, "Sample_Name"].astype(str).values)
 
     pheno_tree, root_pheno, c2nodeid_dict = create_tree(icd_codes_df, icd_samples_df)
-    create_case_controls_file(icd_codes_of_interest, cohort_samples, pheno_tree, root_pheno, c2nodeid_dict, cli_args.save_dir)
+    create_case_controls_file(icd_codes_of_interest, cohort_case_samples, pheno_tree, root_pheno, c2nodeid_dict, cli_args.save_dir, cli_args.case_cont_mode)
     
