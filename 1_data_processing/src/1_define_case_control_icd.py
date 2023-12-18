@@ -146,23 +146,36 @@ def create_icd_samples_file(icd_raw_dir):
 
 def create_case_controls_file(icd_codes_of_interest, cohort_case_samples, pheno_tree, root_pheno, c2nodeid_dict, save_dir, case_cont_mode):
     for icdc in icd_codes_of_interest:
+        all_samples = root_pheno.get_samples()
         icdc_node = pheno_tree.node_dict[c2nodeid_dict[icdc]]
         comorbid_samples = icdc_node.get_samples()
         comorbid_samples_top = get_samples_in_top_parent(icdc_node, pheno_tree, root_pheno)
+        non_cohort_samples = all_samples.difference(cohort_case_samples)
+        non_comorbid_samples = all_samples.difference(comorbid_samples_top)
         
         if case_cont_mode=="risk":
             # people who have both obesity and the comorbidity
             case_samples = cohort_case_samples.intersection(comorbid_samples)
         else:
-            # people who have obesity but not the comorbidity or its related parent
+            # people who have obesity but not the comorbidity
             case_samples = cohort_case_samples.difference(comorbid_samples)
 
         if case_cont_mode=="risk":
-            # people who have either obesity or comorbidity not both
-            control_samples = cohort_case_samples.difference(comorbid_samples_top).union(comorbid_samples.difference(cohort_case_samples))
+            # people who have obesity but not the comorbidity or its related disorders
+            control_samples = cohort_case_samples.difference(comorbid_samples_top)
+            # add people without obesity but the comorbidity
+            control_samples = control_samples.union(non_cohort_samples.intersection(comorbid_samples))
+            # add people without obesity of the comorbidity
+            control_samples = control_samples.union(non_cohort_samples.intersection(non_comorbid_samples))
+            assert len(case_samples.intersection(control_samples)) == 0
         else:
-            # people who have obesity and the comorbidity and those who just have the comorbidity and its related parents
-            control_samples = cohort_case_samples.intersection(comorbid_samples).union(comorbid_samples_top.difference(cohort_case_samples))
+            # people who have obesity and the comorbidity
+            control_samples = cohort_case_samples.intersection(comorbid_samples)
+            # add people without obesity but the comorbidity
+            control_samples = control_samples.union(non_cohort_samples.intersection(comorbid_samples))
+            # add people without obesity of the comorbidity
+            control_samples = control_samples.union(non_cohort_samples.intersection(non_comorbid_samples))
+            assert len(case_samples.intersection(control_samples)) == 0
 
         print(icdc, len(case_samples), len(control_samples))
         icd_meaning = icdc_node.meaning.replace(" ", "")
