@@ -65,4 +65,6 @@ if __name__ == "__main__":
     get_scaled_bmi(train_df, categorical_cols, numerical_cols, scaled_numerical_cols, train_save_file)
     # save the non british samples as test cohort
     test_save_file = os.path.join(cli_args.save_dir, "test_cohort_bmi.csv.gz")
-    test_df.to_csv(test_save_file, index=True)
+    test_df = test_df.loc[~test_df.loc[:, required_cols_for_analysis].isna().any(axis=1)]
+    get_scaled_bmi(test_df, categorical_cols, numerical_cols, scaled_numerical_cols, test_save_file)
+    # test_df.to_csv(test_save_file, index=True)
