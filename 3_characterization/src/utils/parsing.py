@@ -1,5 +1,5 @@
 import pandas as pd
-
+from functools import reduce
 
 def get_gene_set_from_file(gene_file):
     with open(gene_file, "r") as f:
@@ -29,3 +29,11 @@ def get_combo_genes_from_file(combo_file):
     combo_df["uniq_items"] = combo_df.uniq_items.apply(lambda x: x.replace("Input_", ""))
     combo_genes = set("|".join(combo_df.uniq_items.values).split("|"))
     return combo_genes
+
+
+def get_combo_info_from_files(combo_files):
+    combo_genes = [get_combo_genes_from_file(cf) for cf in combo_files]
+    combo_genes = reduce(lambda x,y: x.union(y), combo_genes)
+    combo_samples = [get_combo_samples_from_file(cf) for cf in combo_files]
+    combo_samples = reduce(lambda x,y: x.union(y), combo_samples)
+    return combo_genes, combo_samples

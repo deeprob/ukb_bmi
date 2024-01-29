@@ -1,6 +1,9 @@
 import os
+import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+import matplotlib.patches as mpatches
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 matplotlib.rcParams['font.sans-serif'] = "Arial" # missing fonts:: https://alexanderlabwhoi.github.io/post/2021-03-missingfont/
@@ -86,3 +89,113 @@ def plot_variance_explained(plot_df):
             width + 1, rect.get_y() + rect.get_height() / 2,  f"{round(width, 3)}%", ha="left", va="center"
         )
     return fig
+
+
+###########################
+# combo carriers bmi plot #
+###########################
+def plot_box_single_bmi(
+        boxdf, ttest_pval, 
+        xvar="combo_carriers", yvar="bmi", ylim=(12, 45), 
+        xticklabel=["Non\ncarrier", "Carrier"], ttest_hline=43, ttest_text=44):
+    # Define Canvas
+    fig,ax = plt.subplots(1, 1, figsize=(4, 6))
+
+    # Box Plot
+    sns_box = sns.boxplot(
+        data=boxdf,
+        x=xvar,
+        y=yvar,
+        order=[False, True],
+        hue_order=[False,True],
+        gap=0.5,
+        palette= ["whitesmoke", sns.color_palette("Reds", 15).as_hex()[7]],
+        dodge=False, width=0.75, linewidth=2.25, fliersize=0, capprops={'color':'none'}, 
+        boxprops={ 'edgecolor':'k'},  # 'facecolor':'none',
+        whiskerprops={'color':'k'}, medianprops={'color':'k'}) # 
+
+    # Adjust Axis
+    # ax.set_yticks([-0.02, 0, 0.02, 0.04])
+    ax.set_xlim((-1, 2))
+    ax.set_ylim(ylim)
+    # ax.set_ylabel('Percentage')
+    ax.set_xticklabels(xticklabel, rotation=45, ha="center", fontsize=14)
+    ax.set_xlabel("")
+    ax.set_ylabel("BMI")
+    ax.hlines(ttest_hline, 0, 1, color="k")
+    ax.text(0.5, ttest_text, f"P = {ttest_pval:.2E}", ha="center", va="bottom", fontsize=14)
+
+    # Remove Spines
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False);
+    return fig, ax
+
+
+###################
+# oligogenic plot #
+###################
+def plot_box_single_oligo(
+        boxdf, ttest_pval, 
+        xvar="mutation", yvar="bmi", ylim=(10, 50), 
+        xticklabel=["Single\nHit", "Combo\ncarriers"], ttest_hline=45, ttest_text=46):
+    # Define Canvas
+    fig,ax = plt.subplots(1, 1, figsize=(4, 6))
+
+    # Box Plot
+    sns_box = sns.boxplot(
+        data=boxdf,
+        x=xvar,
+        y=yvar,
+        order=["Single Hit", "Combo carriers"],
+        hue_order=["Single Hit", "Combo carriers"],
+        gap=0.5,
+        palette= ["whitesmoke", sns.color_palette("Reds", 15).as_hex()[7]],
+        dodge=False, width=0.75, linewidth=2.25, fliersize=0, capprops={'color':'none'}, 
+        boxprops={ 'edgecolor':'k'},  # 'facecolor':'none',
+        whiskerprops={'color':'k'}, medianprops={'color':'k'}) # 
+
+    # Adjust Axis
+    # ax.set_yticks([-0.02, 0, 0.02, 0.04])
+    ax.set_xlim((-1, 2))
+    ax.set_ylim(ylim)
+    # ax.set_ylabel('Percentage')
+    ax.set_xticklabels(xticklabel, rotation=45, ha="center", fontsize=14)
+    ax.set_xlabel("")
+    ax.set_ylabel("BMI")
+    ax.hlines(ttest_hline, 0, 1, color="k")
+    ax.text(0.5, ttest_text, f"P = {ttest_pval:.2E}", ha="center", va="bottom", fontsize=14)
+
+    # Remove Spines
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False);
+    return fig, ax
+
+
+#######################
+# additive model plot #
+#######################
+def create_additive_plot(plot_df):
+    fig,ax = plt.subplots(1,1,figsize=(6,4))
+
+    g = sns.histplot(
+        data=plot_df, x='value', 
+        hue='variable', hue_order=["Observed", "Expected"],
+        edgecolor="k",
+        linewidth=0.45,
+        palette=["whitesmoke", "whitesmoke"], kde=True, # sns.color_palette("Reds", 15).as_hex()[7]
+        element="bars", fill=True, bins=150, line_kws={"linewidth":2, "linestyle":"solid"}, legend=False,
+        ax=ax)
+    g.axes.lines[1].set_color("#a30f15")
+    g.axes.lines[0].set_color("#08509b")
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(MultipleLocator(5))
+    ax.set_xlim(20, 45)
+    g.set_xlabel("BMI")
+    ax.spines[['right', 'top']].set_visible(False)
+
+    # legend
+    red_patch = mpatches.Patch(color='#a30f15', label='Observed')
+    blue_patch = mpatches.Patch(color='#08509b', label='Expected')
+    ax.legend(handles=[blue_patch, red_patch], handlelength=2, handleheight=0.001, frameon=False)
+    return fig, ax
+

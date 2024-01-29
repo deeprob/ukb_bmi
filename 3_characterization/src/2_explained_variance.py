@@ -45,13 +45,6 @@ def prepare_genotypes_with_combos(genotype_df, combo_genes, combo_samples):
     genotype_df = pd.crosstab(genotype_df.samples, genotype_df.gene)
     return genotype_df
 
-def get_combo_info_from_files(combo_files):
-    combo_genes = [utpa.get_combo_genes_from_file(cf) for cf in combo_files]
-    combo_genes = reduce(lambda x,y: x.union(y), combo_genes)
-    combo_samples = [utpa.get_combo_samples_from_file(cf) for cf in combo_files]
-    combo_samples = reduce(lambda x,y: x.union(y), combo_samples)
-    return combo_genes, combo_samples
-
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Variance explained")
@@ -88,7 +81,7 @@ if __name__=="__main__":
     print(prs_rare_exp_variance)
 
 
-    combo_genes, combo_samples = get_combo_info_from_files(cli_args.combo_files)
+    combo_genes, combo_samples = utpa.get_combo_info_from_files(cli_args.combo_files)
     gdf_combos = prepare_genotypes_with_combos(genotype_df, combo_genes, combo_samples)
     gdf = gdf_combos.merge(gdf_genes, how="outer", left_index=True, right_index=True).fillna(0.)
     gpdf = cohort_df.merge(gdf, left_index=True, right_index=True, how="left").fillna(0.)
