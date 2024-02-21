@@ -1,0 +1,1 @@
+--combo_files /data6/deepro/ukb_bmi/3_characterization/data/combo_info/british/discovery_combo2.csv /data6/deepro/ukb_bmi/3_characterization/data/combo_info/british/discovery_combo3.csv --save_dir /data6/deepro/ukb_bmi/3_characterization/data/ppi_network/british/

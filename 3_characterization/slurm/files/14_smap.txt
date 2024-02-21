@@ -1,0 +1,1 @@
+--combo_dir /data6/deepro/ukb_bmi/2_rarecomb/data --groups british british_male british_female pre_menopause post_menopause --save_dir /data6/deepro/ukb_bmi/3_characterization/data/shared

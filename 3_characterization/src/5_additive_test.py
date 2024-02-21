@@ -1,5 +1,6 @@
 import argparse
 import pandas as pd
+from scipy.stats import ttest_ind
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
@@ -42,10 +43,11 @@ def prepare_train_test(train_df, test_df, categorical_cols, numerical_cols, scal
         train_df[cat_col] = en.transform(train_df[cat_col])
         test_df[cat_col] = en.transform(test_df[cat_col])
     
-    num_col_scaler = StandardScaler()
-    num_col_scaler.fit(train_df.loc[:, numerical_cols])
-    train_df[numerical_cols] = num_col_scaler.transform(train_df.loc[:, numerical_cols])
-    test_df[numerical_cols] = num_col_scaler.transform(test_df.loc[:, numerical_cols])
+    if numerical_cols:
+        num_col_scaler = StandardScaler()
+        num_col_scaler.fit(train_df.loc[:, numerical_cols])
+        train_df[numerical_cols] = num_col_scaler.transform(train_df.loc[:, numerical_cols])
+        test_df[numerical_cols] = num_col_scaler.transform(test_df.loc[:, numerical_cols])
 
     bmi_col_scaler = StandardScaler()
     bmi_col_scaler.fit(train_df.loc[:, ["bmi"]])
@@ -101,6 +103,8 @@ if __name__=="__main__":
 
     test_combo_gene_df[f"{pheno_name}_pred"] = y_pred
     print(test_combo_gene_df.head())
+    ttest_pval = ttest_ind(test_combo_gene_df[f"{pheno_name}_pred"], test_combo_gene_df[f"{pheno_name}"], alternative="less").pvalue
+    print(ttest_pval)
     plot_df = test_combo_gene_df.reset_index().rename(columns={f"{pheno_name}": "Observed", f"{pheno_name}_pred": "Expected"}).melt(id_vars="index")
     fig, ax = utpl.create_additive_plot(plot_df)
     utpl.save_pdf(cli_args.save_file, fig)

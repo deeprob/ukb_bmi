@@ -1,0 +1,1 @@
+--gene_file /data6/deepro/ukb_bmi/3_characterization/data/combo_info/british/combo_genes.list --population_gene_file /data6/deepro/ukb_bmi/3_characterization/data/combo_info/british/all_genes.list --save_dir /data6/deepro/ukb_bmi/3_characterization/data/enrichment/british/
