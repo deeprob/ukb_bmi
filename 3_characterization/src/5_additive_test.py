@@ -1,3 +1,4 @@
+import os
 import argparse
 import pandas as pd
 from scipy.stats import ttest_ind
@@ -59,12 +60,31 @@ def prepare_train_test(train_df, test_df, categorical_cols, numerical_cols, scal
 
     return X_train, y_train, X_test, y_test, bmi_col_scaler
 
+def get_model_predictions(genotype_df, cohort_df, combo_genes, combo_samples, group=""):
+    train_combo_gene_df, test_combo_gene_df, gene_cols = prepare_model_data(genotype_df, cohort_df, combo_genes, combo_samples)
+    categorical_cols = ["genetic_sex"]
+    numerical_cols = ["age"] + [f"genetic_pca{i}" for i in range(1, 40)]
+    scaled_numerical_cols = ["bmi_prs"]
+    encoded_categorical_cols = gene_cols
+    X_train, y_train, X_test, y_test, bmi_col_scaler = prepare_train_test(train_combo_gene_df, test_combo_gene_df, categorical_cols, numerical_cols, scaled_numerical_cols, encoded_categorical_cols)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    y_pred = bmi_col_scaler.inverse_transform(y_pred)
+    test_combo_gene_df[f"{pheno_name}_pred"] = y_pred
+    ttest_pval = ttest_ind(test_combo_gene_df[f"{pheno_name}_pred"], test_combo_gene_df[f"{pheno_name}"], alternative="less").pvalue
+    if group:
+        test_combo_gene_df["group"] = group
+    return test_combo_gene_df, ttest_pval
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Additive model")
     parser.add_argument("--genotype_file", type=str, help="Filepath of the gene burden file")
-    parser.add_argument("--cohort_file", type=str, help="Filepath of the cohort phenotype file")
+    parser.add_argument("--cohort_files", type=str, help="Filepath of the cohort phenotype file", nargs="+")
     parser.add_argument("--combo_files", type=str, help="Filepath of the combo files given by Rarecomb", nargs="+")
+    parser.add_argument("--combo_dir", type=str, help="Filepath of the combo files dir given by Rarecomb")
+    parser.add_argument("--combo_filepre", type=str, help="Prefix of the combo files for groups")
+    parser.add_argument("--groups", type=str, help="The different groups to compare", nargs="+", default=[])
     parser.add_argument("--save_file", type=str, help="Filepath where additive plot will be stored")
     parser.add_argument("--lifestyle_file", type=str, help="Filepath of the lifestyle factor matrix", default="")
 
@@ -72,13 +92,6 @@ if __name__=="__main__":
     pheno_name = "bmi"
     
     genotype_df = pd.read_csv(cli_args.genotype_file)
-    cohort_df = pd.read_csv(
-        cli_args.cohort_file, 
-        usecols=["sample_names", "genetic_sex", "age"] + [f"genetic_pca{i}" for i in range(1, 40)] + ["bmi_prs", "bmi"], 
-        index_col=["sample_names"]).dropna()
-    cohort_df.index = cohort_df.index.astype(str)
-    combo_genes, combo_samples = utpa.get_combo_info_from_files(cli_args.combo_files)
-
     if cli_args.lifestyle_file:
         lifestyle_df = pd.read_csv(cli_args.lifestyle_file)
         cols_to_melt = list(lifestyle_df.columns)
@@ -87,24 +100,34 @@ if __name__=="__main__":
         lifestyle_df = lifestyle_df.groupby("gene").agg(lambda x: ",".join(map(str, x))).reset_index().rename(columns={"Sample_Name": "samples"})
         genotype_df = pd.concat((genotype_df, lifestyle_df)).reset_index(drop=True)
 
-    train_combo_gene_df, test_combo_gene_df, gene_cols = prepare_model_data(genotype_df, cohort_df, combo_genes, combo_samples)
+    if len(cli_args.groups)==0:
+        cohort_df = pd.read_csv(
+            cli_args.cohort_files[0], 
+            usecols=["sample_names", "genetic_sex", "age"] + [f"genetic_pca{i}" for i in range(1, 40)] + ["bmi_prs", "bmi"], 
+            index_col=["sample_names"]).dropna()
+        cohort_df.index = cohort_df.index.astype(str)
+        combo_genes, combo_samples = utpa.get_combo_info_from_files(cli_args.combo_files)
+        test_combo_gene_df, ttest_pval = get_model_predictions(genotype_df, cohort_df, combo_genes, combo_samples, group="")
+        plot_df = test_combo_gene_df.reset_index().rename(columns={f"{pheno_name}": "Observed", f"{pheno_name}_pred": "Expected"}).melt(id_vars="index")
+        fig, ax = utpl.create_additive_plot(plot_df)
+        print(ttest_pval)
+    else:
+        assert len(cli_args.cohort_files)==len(cli_args.groups)
+        test_combo_df_list = []
+        ttest_pvals = []
+        for group, cohort_file in zip(cli_args.groups, cli_args.cohort_files):
+            cohort_df = pd.read_csv(
+                cohort_file, 
+                usecols=["sample_names", "genetic_sex", "age"] + [f"genetic_pca{i}" for i in range(1, 40)] + ["bmi_prs", "bmi"], 
+                index_col=["sample_names"]).dropna()
+            cohort_df.index = cohort_df.index.astype(str)
+            combo_files = [cf.path for cf in os.scandir(os.path.join(cli_args.combo_dir, group)) if cf.name.startswith(cli_args.combo_filepre)]
+            combo_genes, combo_samples = utpa.get_combo_info_from_files(combo_files)
+            test_combo_gene_df, ttest_pval = get_model_predictions(genotype_df, cohort_df, combo_genes, combo_samples, group=group)
+            test_combo_df_list.append(test_combo_gene_df)
+            ttest_pvals.append(ttest_pval)
+        test_combo_gene_df = pd.concat(test_combo_df_list)
+        test_combo_gene_df = test_combo_gene_df.melt(id_vars=["group"], value_vars=[pheno_name, f"{pheno_name}_pred"], var_name="bmi_type", value_name="BMI")
+        fig, ax = utpl.plot_box_oligo(test_combo_gene_df, ttest_pvals, xvar="group", yvar="BMI", huevar="bmi_type", hue_order=[f"{pheno_name}_pred", pheno_name], order=cli_args.groups, figsize=(12, 6))
 
-    categorical_cols = ["genetic_sex"]
-    numerical_cols = ["age"] + [f"genetic_pca{i}" for i in range(1, 40)]
-    scaled_numerical_cols = ["bmi_prs"]
-    encoded_categorical_cols = gene_cols
-
-    X_train, y_train, X_test, y_test, bmi_col_scaler = prepare_train_test(train_combo_gene_df, test_combo_gene_df, categorical_cols, numerical_cols, scaled_numerical_cols, encoded_categorical_cols)
-
-    model = LinearRegression()
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    y_pred = bmi_col_scaler.inverse_transform(y_pred)
-
-    test_combo_gene_df[f"{pheno_name}_pred"] = y_pred
-    print(test_combo_gene_df.head())
-    ttest_pval = ttest_ind(test_combo_gene_df[f"{pheno_name}_pred"], test_combo_gene_df[f"{pheno_name}"], alternative="less").pvalue
-    print(ttest_pval)
-    plot_df = test_combo_gene_df.reset_index().rename(columns={f"{pheno_name}": "Observed", f"{pheno_name}_pred": "Expected"}).melt(id_vars="index")
-    fig, ax = utpl.create_additive_plot(plot_df)
     utpl.save_pdf(cli_args.save_file, fig)

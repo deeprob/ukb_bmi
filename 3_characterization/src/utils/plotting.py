@@ -497,9 +497,24 @@ def create_dot_plot(go_file, terms_col="Term", odds_ratio_col="odds_ratio", gene
     return fig, axes
 
 
-########################
-# proteomics coef plot #
-########################
+####################
+# proteomics plots #
+####################
+def bmires_bin_plot_for_proteins(protein_gene_pheno_df, gene1, gene2):
+    g = sns.catplot(
+        data=protein_gene_pheno_df,
+        x="bmi_res_bins",
+        row=f"level_{gene1}",
+        col=f"level_{gene2}",
+        row_order=["above", "median", "below"],
+        col_order=["below", "median", "above"],
+        kind="count",
+        stat="proportion",
+        sharex=True,
+        sharey=True,
+        )
+    return g.figure
+
 
 def create_coefs_plot(df, figsize=(6,3)):
     fig = fp.forestplot(
@@ -531,6 +546,39 @@ def create_coefs_plot(df, figsize=(6,3)):
         )
     return fig
 
+def plot_box_protein_levels(
+        boxdf, genes, protein_levels, sample_id, bmi, bmi_prs, bmi_residuals,
+        xvar="genes", yvar="npx"
+        ):
+    # Define Canvas
+    fig,ax = plt.subplots(1, 1, figsize=(4, 6))
+
+    # Box Plot
+    sns_box = sns.boxplot(
+        data=boxdf,
+        x=xvar,
+        y=yvar,
+        order=genes,
+        gap=0.5,
+        color= "whitesmoke",
+        dodge=False, width=0.75, linewidth=2.25, fliersize=0, capprops={'color':'none'}, 
+        boxprops={ 'edgecolor':'k'},  # 'facecolor':'none',
+        whiskerprops={'color':'k'}, medianprops={'color':'k'}) # 
+
+    # Adjust Axis
+    ax.set_xlabel("")
+    ax.set_ylabel("NPX")
+    for i,pl in enumerate(protein_levels):
+        ax.plot(i, pl, 'go', markersize=10)
+
+    ax.set_ylim(-4, 4)
+    # Remove Spines
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    print(bmi, bmi_prs, bmi_residuals)
+    bmi, bmi_prs, bmi_residuals = list(map(lambda x: round(x, 3), [bmi, bmi_prs, bmi_residuals]))
+    ax.set_title(f"{sample_id}\nBMI:{bmi}|PRS:{bmi_prs}|Res:{bmi_residuals}");
+    return fig, ax
 
 ##############
 # upset plot #

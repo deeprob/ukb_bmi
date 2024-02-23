@@ -29,6 +29,23 @@ def prepare_combo_proteomics_data(protein_df, combo_files):
     combo_w_proteomics = combo_df.loc[combo_df.proteomics_data==True]
     return combo_w_proteomics
 
+def create_bmires_bin_plot_for_proteins_helper(gene1, gene2, protein_pheno_df):
+    protein_gene_pheno_df = protein_pheno_df.loc[:, [gene1, gene2, "bmi_residuals"]].dropna()
+    protein_gene_pheno_df[f"level_{gene1}"] = pd.qcut(protein_gene_pheno_df[gene1], [0, .25, .5, .75, 1.], ["below", "median1", "median2", "above"])
+    protein_gene_pheno_df[f"level_{gene1}"] = protein_gene_pheno_df[f"level_{gene1}"].map({"median1": "median", "median2": "median", "above": "above", "below": "below"})
+    protein_gene_pheno_df[f"level_{gene2}"] = pd.qcut(protein_gene_pheno_df[gene2], [0, .25, .5, .75, 1.], ["below", "median1", "median2", "above"])
+    protein_gene_pheno_df[f"level_{gene2}"] = protein_gene_pheno_df[f"level_{gene2}"].map({"median1": "median", "median2": "median", "above": "above", "below": "below"})
+    protein_gene_pheno_df["bmi_res_bins"] = pd.qcut(protein_gene_pheno_df.bmi_residuals, 10, labels=False)
+    fig = utpl.bmires_bin_plot_for_proteins(protein_gene_pheno_df, gene1, gene2)
+    return fig
+
+def create_bmires_bin_plot_for_proteins(genes, protein_pheno_df):
+    if len(genes)!=2:
+        raise ValueError("Cannot create this plot for more than 2 genes")
+    gene1, gene2 = genes
+    fig = create_bmires_bin_plot_for_proteins_helper(gene1, gene2, protein_pheno_df)
+    return fig
+    
 def prepare_polynomial_features(protein_df, genes, y_var, include_bias):
     protein_gene_df = protein_df.loc[:, genes].dropna()
     X = protein_gene_df.values
@@ -70,6 +87,31 @@ def get_protein_coeffs(genes, protein_df, model_type, y_var="bmi_residuals", inc
     ser["p_val"] = int_p_val
     return ser
 
+def add_sample_info_to_proteomics_data(protein_df, combo_w_proteomics, phenotype_df):
+    protein_samples = set(protein_df.index)
+    protein_set = set(protein_df.columns)
+    combo_w_proteomics["combo_samples_w_proteomics"] = combo_w_proteomics.combo_samples.apply(lambda s: "|".join(set(s.split("|")).intersection(protein_samples)))
+    combo_w_proteomics["combo_samples_w_proteomics"] = combo_w_proteomics.combo_samples_w_proteomics.str.split("|")
+    combo_w_proteomics = combo_w_proteomics.explode("combo_samples_w_proteomics")
+    combo_w_proteomics = combo_w_proteomics.loc[combo_w_proteomics.combo_samples_w_proteomics!=""]
+    combo_w_proteomics = combo_w_proteomics.merge(phenotype_df, left_on="combo_samples_w_proteomics", right_on="sample_names")
+    return combo_w_proteomics
+
+def plot_proteomics_samples_helper(sample_id, genes, protein_levels, bmi, bmi_prs, bmi_residuals, protein_df):
+    plot_df = protein_df.loc[~protein_df.index.isin([sample_id]), genes]
+    plot_df = plot_df.melt(var_name="genes", value_name="npx")
+    fig, ax = utpl.plot_box_protein_levels(plot_df, genes, protein_levels, sample_id, bmi, bmi_prs, bmi_residuals)
+    return fig
+
+def plot_proteomics_samples(ser, protein_df):
+    sample_id = ser.combo_samples_w_proteomics
+    genes = ser.genes
+    protein_levels = protein_df.loc[sample_id, genes].values
+    bmi = ser.bmi
+    bmi_prs = ser.bmi_prs
+    bmi_residuals = ser.bmi_residuals
+    fig = plot_proteomics_samples_helper(sample_id, genes, protein_levels, bmi, bmi_prs, bmi_residuals, protein_df)
+    return fig
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Combo info")
@@ -80,18 +122,33 @@ if __name__=="__main__":
 
     cli_args = parser.parse_args()
 
+    os.makedirs(cli_args.save_dir, exist_ok=True)
     protein_dfs = [pd.read_csv(pf) for pf in cli_args.protein_files]
     phenotype_df = pd.read_csv(cli_args.phenotype_file, usecols=["sample_names", "bmi", "bmi_prs", "bmi_residuals"], dtype={"sample_names": str, "bmi": float, "bmi_prs": float, "bmi_residuals":float})
     
     protein_df = prepare_npx_data(protein_dfs[0], protein_dfs[1], protein_dfs[2])
     combo_w_proteomics = prepare_combo_proteomics_data(protein_df, cli_args.combo_files)
     protein_pheno_df = protein_df.merge(phenotype_df, left_index=True, right_on="sample_names")
-
-    os.makedirs(cli_args.save_dir, exist_ok=True)
-    combo_w_proteomics_info = combo_w_proteomics.merge(combo_w_proteomics.genes.apply(get_protein_coeffs, args=(protein_pheno_df, "sm", "bmi_residuals", True)), left_index=True, right_index=True)
-    save_file = os.path.join(cli_args.save_dir, "combo_protein_coefs.tsv")
-    combo_w_proteomics_info.loc[:, ["uniq_items", "gene1",  "gene2", "interaction", "r2", "ci_low", "ci_high", "p_val"]].to_csv(save_file, index=False)
+    combo_wise_figs = combo_w_proteomics.genes.apply(create_bmires_bin_plot_for_proteins, args=(protein_pheno_df, )).to_list()
+    combo_fig_dir = os.path.join(cli_args.save_dir, "combo_wise_figs")
+    os.makedirs(combo_fig_dir, exist_ok=True)
+    for genes, combo_fig in zip(combo_w_proteomics.genes, combo_wise_figs):
+        save_file = os.path.join(combo_fig_dir, f"{'|'.join(genes)}_proteomics.pdf")
+        utpl.save_pdf(save_file, combo_fig)
     
-    fig = utpl.create_coefs_plot(combo_w_proteomics_info, figsize=(8, 4))
-    save_file = os.path.join(cli_args.save_dir, "combo_protein_coefs.pdf")
-    utpl.save_pdf(save_file, fig.figure)
+    combo_w_proteomics_info = combo_w_proteomics.merge(combo_w_proteomics.genes.apply(get_protein_coeffs, args=(protein_pheno_df, "sm", "bmi_residuals", True)), left_index=True, right_index=True)
+    if len(combo_w_proteomics_info)>0:
+        save_file = os.path.join(cli_args.save_dir, "combo_protein_coefs.tsv")
+        combo_w_proteomics_info.loc[:, ["uniq_items", "gene1",  "gene2", "interaction", "r2", "ci_low", "ci_high", "p_val"]].to_csv(save_file, index=False)
+        
+        fig = utpl.create_coefs_plot(combo_w_proteomics_info, figsize=(8, 4))
+        save_file = os.path.join(cli_args.save_dir, "combo_protein_coefs.pdf")
+        utpl.save_pdf(save_file, fig.figure)
+
+        combo_w_proteomics_sample_info = add_sample_info_to_proteomics_data(protein_df, combo_w_proteomics, phenotype_df)
+        sample_wise_figs = combo_w_proteomics_sample_info.apply(plot_proteomics_samples, args=(protein_df, ), axis=1).to_list()
+        sample_fig_dir = os.path.join(cli_args.save_dir, "sample_wise_figs")
+        os.makedirs(sample_fig_dir, exist_ok=True)
+        for sample_num, sample_fig in zip(combo_w_proteomics_sample_info.combo_samples_w_proteomics, sample_wise_figs):
+            save_file = os.path.join(sample_fig_dir, f"{sample_num}_proteomics.pdf")
+            utpl.save_pdf(save_file, sample_fig)
