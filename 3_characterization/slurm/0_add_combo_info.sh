@@ -18,8 +18,7 @@ source /opt/anaconda/bin/activate /data6/deepro/miniconda3/envs/dnanexus
 
 echo `date` starting job on $HOSTNAME
 
-LINE=$(sed -n "$SLURM_ARRAY_TASK_ID"p /data6/deepro/ukb_bmi/3_characterization/slurm/files/0_smap.txt)
-echo $LINE
+ 
 
 python /data6/deepro/ukb_bmi/3_characterization/src/0_add_combo_info.py $LINE
 

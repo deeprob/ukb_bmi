@@ -62,6 +62,7 @@ def create_odds_ratio_plot(df, figsize=(6,3)):
             "xlinewidth": 1,
             "xtick_size": 12,  # adjust x-ticker fontsize
             "lw": 3,
+            "thresholds": (0.001, 0.01, 0.05),
             }       
         )
     return fig
@@ -589,3 +590,48 @@ def get_upset_plot(parsed_upset_df, figsize=(14, 6)):
     upsetplot.plot(parsed_upset_df.counts, show_counts=True, fig=fig, element_size=None)
     ax.axis("off")
     return fig
+
+################################
+# combo and others interaction #
+################################
+
+def create_variate_interaction_plot(df, height=6):
+    g = sns.catplot(
+        data=df, x="labels", y="bmi", hue="bmi_prs_hue", col="carrier",
+        capsize=.2, palette="YlGnBu_d", errorbar="se",
+        kind="point", height=height, aspect=.75,
+    )
+    for ax in g.axes.flatten():
+        ax.grid()
+    return g.figure
+
+def create_variate_interaction_model_plot(df, figsize=(6,3)):
+    fig = fp.forestplot(
+        df,  # the dataframe with results data
+        estimate="coefs",  # col containing estimated effect size 
+        ll="ci_low", hl="ci_high",
+        pval="p_value",
+        decimal_precision=3,
+        varlabel="variables",  # column containing variable label
+        color_alt_rows=True,
+        table=True,
+        annote=["est_ci"],
+        annoteheaders=["Est. (95% Conf. Int.)"],
+        # group ordering
+        sort=True, # sort in ascending order (sorts within group if group is specified)
+        ylabel="Est. (95% Conf. Int.)",  # y-label title
+        xlabel="Model Coefficients",  # x-label title
+        xticks=[-0.5, 0, 0.5, 1, 5],
+        figsize=figsize,
+        **{"marker": "D",  # set maker symbol as diamond
+            "markersize": 75,  # adjust marker size
+            "xlinestyle": (0, (10, 5)),  # long dash for x-reference line 
+            "xlinecolor": "k",  # gray color for x-reference line
+            "xline": 0,
+            "xlinewidth": 1,
+            "xtick_size": 12,  # adjust x-ticker fontsize
+            "lw": 3,
+            "thresholds": (0.001, 0.01, 0.05),
+            }       
+        )
+    return fig.figure

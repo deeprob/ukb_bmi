@@ -232,6 +232,7 @@ if __name__=="__main__":
     parser.add_argument("--rvas_gene_files", type=str, help="Filepath of the binarized lifestyle factor file", nargs="+")
     parser.add_argument("--icd_raw_dir", type=str, help="Filepath of the icd codes to samples files storage dir")
     parser.add_argument("--icd_codes_file", type=str, help="Filepath of the icd codes to parent node file")
+    parser.add_argument("--icd_terms_plot", type=str, help="icd codes to plot in comorbidity enrichment", nargs="+")
     parser.add_argument("--save_dir", type=str, help="Filepath where combo info will be stored")
 
     cli_args = parser.parse_args()
@@ -263,11 +264,12 @@ if __name__=="__main__":
 
     icd_samples_df = utpa.create_icd_samples_file(cli_args.icd_raw_dir)
     icd_codes_df = pd.read_csv(cli_args.icd_codes_file, usecols=["coding", "meaning", "node_id", "parent_id"], sep="\t")
+    icd_codes_df["coding"] = icd_codes_df.coding.str.replace(" ", "")
     pheno_tree, root_pheno, c2nodeid_dict = utpa.create_tree(icd_codes_df, icd_samples_df)
     icd_df_tenth = get_icd_enrich_per_decile(phenotype_samples_df, 9, pheno_tree, icd_codes_df, c2nodeid_dict)
     save_file = os.path.join(cli_args.save_dir, "icd_enrich_tenth_decile.csv")
     icd_df_tenth.to_csv(save_file)
-    icd_codes = ["I272", "E059", "E06", "Block K90-K93", "I27", "M19", "I259", "M190", "K92", "K804", "M1907"]
+    icd_codes = cli_args.icd_terms_plot #["I272", "E059", "E06", "Block K90-K93", "I27", "M19", "I259", "M190", "K92", "K804", "M1907"]
     plot_df = icd_df_tenth.loc[icd_df_tenth.icd_code.isin(icd_codes)].sort_values("p_value")
     plot_df = plot_df.loc[~plot_df.ci_high.isin([np.inf, -np.inf])]
     fig = utpl.get_odds_ratio_plot_bmi_extreme(plot_df, xticks=[0, 0.6, 1, 5])
