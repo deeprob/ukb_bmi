@@ -443,15 +443,15 @@ def get_odds_ratio_plot_bmi_extreme(
 
     return fig.figure
 
-def get_prs_bmi_res_decile_plot(plot_df, bmi_dict):
+def get_prs_bmi_res_decile_plot(plot_df, bmi_dict, hue="bmi_prs_categories", hue_order=["lowest", "middle", "highest"]):
     g = sns.catplot(data=plot_df, 
         x="bmi_res_categories",
         y="percent",
-        hue="bmi_prs_categories", 
+        hue=hue,
         kind="bar",
         height=4, aspect=2,
         order=["underweight", "normal", "overweight", "obese", "severe obesity"],
-        hue_order=["lowest", "middle", "highest"],
+        hue_order=hue_order,
         palette=["silver", "gray", "black"]
         )
 
