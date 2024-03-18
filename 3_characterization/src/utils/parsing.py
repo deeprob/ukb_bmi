@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from functools import reduce
 
+
 def get_gene_set_from_file(gene_file):
     with open(gene_file, "r") as f:
         genes = set([g.strip() for g in f.readlines()])
@@ -38,6 +39,11 @@ def get_combo_info_from_files(combo_files):
     combo_samples = [get_combo_samples_from_file(cf) for cf in combo_files]
     combo_samples = reduce(lambda x,y: x.union(y), combo_samples)
     return combo_genes, combo_samples
+
+
+def concat_multiple_combo_files(combo_files):
+    combo_df = pd.concat([pd.read_csv(cf) for cf in combo_files])
+    return combo_df
 
 ############
 # ICD tree #

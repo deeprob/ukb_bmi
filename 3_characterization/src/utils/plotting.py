@@ -102,7 +102,10 @@ def plot_variance_explained(plot_df):
 def plot_box_single_bmi(
         boxdf, ttest_pval, 
         xvar="combo_carriers", yvar="bmi", ylim=(12, 45), 
-        xticklabel=["Non\ncarrier", "Carrier"], ttest_hline=43, ttest_text=44):
+        xticklabel=["Non\ncarrier", "Carrier"],
+        order=[False, True],
+        hue_order=[False,True],
+        ttest_hline=43, ttest_text=44):
     # Define Canvas
     fig,ax = plt.subplots(1, 1, figsize=(4, 6))
 
@@ -111,8 +114,8 @@ def plot_box_single_bmi(
         data=boxdf,
         x=xvar,
         y=yvar,
-        order=[False, True],
-        hue_order=[False,True],
+        order=order,
+        hue_order=hue_order,
         gap=0.5,
         palette= ["whitesmoke", sns.color_palette("Reds", 15).as_hex()[7]],
         dodge=False, width=0.75, linewidth=2.25, fliersize=0, capprops={'color':'none'}, 
@@ -591,13 +594,91 @@ def get_upset_plot(parsed_upset_df, figsize=(14, 6)):
     ax.axis("off")
     return fig
 
-################################
-# combo and others interaction #
-################################
+#########################################
+# bmi prs combo comorbidity interaction #
+#########################################
 
-def create_variate_interaction_plot(df, height=6):
+def create_res_cat_prs_dist_plot(phenotype_samples_df, bmi_dict):
+    fig,ax = plt.subplots(2, 1, figsize=(6, 12), sharex=True, height_ratios=(4, 4))
+    ## BMI prs box plots
+    sns_ax = sns.boxplot(
+        phenotype_samples_df, x="bmi_res_categories", y="bmi_prs", hue="carrier", hue_order=[False, True],
+        order=["underweight", "normal", "overweight", "obese", "severe obesity"],
+        width=0.65, linewidth=1.25, fliersize=0, capprops={'color':'none'}, boxprops={'edgecolor':'k'},
+        medianprops={'color':'k'},
+        linecolor='k',
+        palette= ["whitesmoke", sns.color_palette("Reds", 15).as_hex()[7]],
+        legend=True, gap=0.25, ax=ax[0])
+    ax[0].set_ylim(-3.5, 3.5)
+    ax[0].spines[['right', 'top']].set_visible(False)
+    ax[0].hlines([3 for i in range(5)], [(i-0.25+i*0.001953125) for i in range(0, 5)], [(i+0.25+i*0.001953125) for i in range(0,5)], color="k")
+    for i, (res_cat) in enumerate(["underweight", "normal", "overweight", "obese", "severe obesity"]):
+        psd = phenotype_samples_df.loc[phenotype_samples_df.bmi_res_categories==res_cat]
+        ttest_res = ttest_ind(psd.loc[psd.carrier==True, "bmi_prs"], psd.loc[psd.carrier==False, "bmi_prs"], alternative="less")
+        ttest_pval = ttest_res.pvalue
+        if ttest_pval<0.05:
+            pval_text = "*"
+            if ttest_pval<0.001:
+                pval_text = "**"
+                # pval_text = f"P = {ttest_pval:.1E}"
+            ax[0].text(0.+i, 3.05, pval_text, ha="center", va="bottom", fontsize=14)
+    h,l = ax[0].get_legend_handles_labels()
+    ax[0].legend_.remove()
+    fig.legend(h,l, ncol=2, loc=(0.35, 0.5025), frameon=False)
+    ax[0].set_ylabel("BMI PRS")
+    
+    phenotype_combo_samples_decile_df = phenotype_samples_df.loc[phenotype_samples_df.carrier==True].groupby("bmi_res_categories", observed=True).agg({
+        "sample_names": "count",
+        "bmi_prs": "median",
+        "bmi_residuals": "mean"}
+        ).reset_index()
+
+    ## Combo per decile barplot
+    ax[1].bar(phenotype_combo_samples_decile_df.bmi_res_categories, phenotype_combo_samples_decile_df.sample_names, width=0.75, color=sns.color_palette("Reds", 15).as_hex()[7], edgecolor="k")
+    ax[1].set_xlabel("BMI Residuals Categories")
+    ax[1].set_ylabel("Number of individuals")
+    # g.bar_label([g.containers[i] for i in range])
+    rects = ax[1].patches
+    # Make some labels.
+    for rect in rects:
+        height = rect.get_height()
+        ax[1].text(
+            rect.get_x() + rect.get_width() / 2, height + 5, f"{height}", ha="center", va="bottom"
+        )
+    # ax[1].set_ylim(-100, 3500)
+    ax[1].spines[['right', 'top']].set_visible(False)
+    ax[1].set_xticklabels([f"{l.get_text()}\n{round(bmi_dict[l.get_text()], 2)}" for l in ax[1].get_xticklabels()])
+    return fig,ax
+
+def create_prs_cat_bmi_res_cat_plot(plot_df, bmi_dict, hue="bmi_prs_categories", hue_order=["lowest", "middle", "highest"]):
+    g = sns.catplot(data=plot_df, 
+        x="bmi_res_categories",
+        y="percent",
+        hue=hue,
+        kind="bar",
+        height=4, aspect=2,
+        order=["underweight", "normal", "overweight", "obese", "severe obesity"],
+        hue_order=hue_order,
+        row="carrier",
+        palette=["silver", "gray", "black"]
+        )
+
+    g.set(ylim=(0,100))
+    
+    g.axes.flat[1].set_xticklabels([f"{l.get_text()}\n{round(bmi_dict[l.get_text()], 2)}" for l in  g.axes.flat[1].get_xticklabels()])
+
+    for ax in g.axes.flat:
+        rects = ax.patches
+        for rect in rects:
+            height = rect.get_height()
+            ax.text(
+                rect.get_x() + rect.get_width() / 2, height + 1, f"{round(height, 2)}%", ha="center", va="bottom"
+            )
+    return g.figure
+
+def create_variate_interaction_plot(df, x="labels", y="bmi", order=[0,1,2], hue="bmi_prs_categories", hue_order=["lowest", "middle", "highest"], height=6):
     g = sns.catplot(
-        data=df, x="labels", y="bmi", hue="bmi_prs_hue", col="carrier",
+        data=df, x=x, y=y, hue=hue, order=order, hue_order=hue_order, col="carrier",
         capsize=.2, palette="YlGnBu_d", errorbar="se",
         kind="point", height=height, aspect=.75,
     )
@@ -635,3 +716,32 @@ def create_variate_interaction_model_plot(df, figsize=(6,3)):
             }       
         )
     return fig.figure
+
+#####################
+# Lifestyle factors #
+#####################
+
+def create_lifestyle_oligo_plot(plot_df):
+    fig,ax = plt.subplots(figsize=(6, 8))
+    sns_box = sns.boxplot(
+        data=plot_df, y="bmi", 
+        x="category", order =[ "Non carriers","Gene carriers", "Lifestyle carriers", "Combo carriers",],
+        hue="category", hue_order=[ "Non carriers","Gene carriers", "Lifestyle carriers", "Combo carriers",],
+        palette=["#008176", "#00ADEE", "#ff7f0e", "#FF3688", ],  # '#D1245D', '#00ADEE', '#D1245D', '#00ADEE' "#0000a7" "#eecc16"
+        dodge=False, width=0.35, linewidth=2.25, fliersize=0, capprops={'color':'none'}, boxprops={'facecolor':'none', 'edgecolor':'k'}) # 
+
+
+    # Adjust Axis
+    # ax.set_yticks([-0.02, 0, 0.02, 0.04])
+    ax.set_ylim((10, 50))
+    # ax.set_ylabel('Percentage')
+    ax.set_xticklabels(["Non carriers","Gene carriers", "Lifestyle carriers", "Combo carriers"], rotation=45, fontsize=18)
+    ax.set_yticklabels(ax.get_yticklabels(), fontsize=18)
+    ax.set_xlabel("")
+    ax.set_ylabel("BMI", fontsize=20)
+
+    # Remove Spines
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False);
+    ax.axhline(y=25, linewidth=2, color='grey', linestyle='--')
+    return fig

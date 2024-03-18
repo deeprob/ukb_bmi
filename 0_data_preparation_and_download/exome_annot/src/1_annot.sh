@@ -1,13 +1,13 @@
 #!/bin/bash
 
 chr_num=$1
-notebook_path="exome_annot/annot_run/notebooks/chr${chr_num}/Annot_vep109.ipynb"
+notebook_path="exome_annot/annot_run/notebooks/chr${chr_num}/Annot_vep109_v2.ipynb"
 
 echo Annotating $chr_num
 
 dx login --token zrKqATrAw7tfABynN0pzqtkBZBZJrRSe 
 
-my_cmd="papermill Annot_vep109.ipynb Annot_vep109_out.ipynb"
+my_cmd="papermill Annot_vep109_v2.ipynb Annot_vep109_v2_out.ipynb"
 
 dx run dxjupyterlab_spark_cluster \
     -ifeature="HAIL-VEP" \
